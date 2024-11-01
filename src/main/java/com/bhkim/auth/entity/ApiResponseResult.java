@@ -1,9 +1,10 @@
 package com.bhkim.auth.entity;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class ApiResponseResult<T> {
-
     private boolean success;
     private T data;
     private ExceptionEnum e;
@@ -28,6 +29,5 @@ public class ApiResponseResult<T> {
                 .e(e)
                 .build();
     }
-
 }
 

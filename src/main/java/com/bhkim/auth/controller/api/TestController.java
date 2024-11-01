@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/get")
     public ResponseEntity<ApiResponseResult<String>> test() {
         log.info("test!");
         ApiResponseResult<String> result = ApiResponseResult.success("test");

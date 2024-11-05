@@ -1,4 +1,4 @@
-package com.bhkim.auth.entity;
+package com.bhkim.auth.common;
 
 import lombok.Builder;
 import lombok.Getter;

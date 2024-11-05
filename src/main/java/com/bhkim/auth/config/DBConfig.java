@@ -83,7 +83,7 @@ public class DBConfig {
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("net.kpnp.jpa.entity");
+        em.setPackagesToScan("com.bhkim.auth.entity");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setShowSql(true);
@@ -91,7 +91,7 @@ public class DBConfig {
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("hibernate.hbm2ddl.auto", "none");
-        properties.put("hibernate.dialect", "org.hibernate.dialect.MariaDB103Dialect");
+//        properties.put("hibernate.dialect", "org.hibernate.dialect.MariaDB103Dialect");
         properties.put("hibernate.format_sql", true);
         properties.put("hibernate.show_sql", false);  // sql은 log4j로 출력 org.hibernate.SQL=DEBUG
         properties.put("hibernate.globally_quoted_identifiers", true);  // 예약어 컬럼명 사용 허용
@@ -117,7 +117,7 @@ public class DBConfig {
     }
 
     @Bean(name= "jpaTxManager")
-    public PlatformTransactionManager txManager(EntityManagerFactory entityManagerFactory) {
+    public PlatformTransactionManager jpaTxManager(EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
 

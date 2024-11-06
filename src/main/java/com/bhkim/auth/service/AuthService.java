@@ -30,15 +30,6 @@ public interface AuthService {
     ApiResponseResult<HttpStatus> SignOut();
 
     /**
-     * 회원가입
-     * POST
-     *
-     * @param memberInfo 회원가입 필요한 정보
-     * @return 성공 여부
-     */
-    ApiResponseResult<HttpStatus> SignUp(MemberDto.MemberInfo memberInfo);
-
-    /**
      * 토큰 재발행
      * POST
      * @return TOKEN 값

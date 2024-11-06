@@ -22,11 +22,6 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public ApiResponseResult<HttpStatus> SignUp(MemberDto.MemberInfo memberInfo) {
-        return null;
-    }
-
-    @Override
     public ApiResponseResult<AuthDto.Token> reissueToken() {
         return null;
     }

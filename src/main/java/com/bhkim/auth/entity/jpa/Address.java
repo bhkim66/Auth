@@ -7,13 +7,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.lang.reflect.Member;
-
 @Getter
 @Entity
 @Table(name = "Address")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AddressEntity {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +35,5 @@ public class AddressEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "MEMBER_SEQ", nullable = false)
-    private MemberEntity member;
+    private Member member;
 }

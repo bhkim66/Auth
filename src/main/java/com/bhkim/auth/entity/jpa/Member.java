@@ -4,6 +4,7 @@ import com.bhkim.auth.common.TypeEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberEntity {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +29,25 @@ public class MemberEntity {
     @Column(name = "MEMBER_NAME")
     private String name;
 
-    @NotBlank
-    @Size(min = 1, max = 150)
+    @Min(1)
+    @Max(150)
     @Column(name = "MEMBER_AGE")
     private int age;
 
-    @NotBlank
+    @NotNull
     @Column(name = "MEMBER_SEX")
+    @Enumerated(value = EnumType.STRING)
     private TypeEnum sex;
 
     @Column(name = "MEMBER_PHONE_NUMBER")
     private String phoneNumber;
+
+    @Builder
+    public Member(String id, String name, int age, TypeEnum sex, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
+        this.phoneNumber = phoneNumber;
+    }
 }

@@ -19,12 +19,12 @@ public class MemberEntity {
     private Long seq;
 
     @NotBlank
-//    @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$")
+    @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$")
     @Column(name = "MEMBER_ID")
     private String id;
 
     @NotBlank
-//    @Pattern(regexp = "^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]*$")
+    @Pattern(regexp = "^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]*$")
     @Column(name = "MEMBER_NAME")
     private String name;
 

@@ -9,23 +9,25 @@ spring:
     application:
         name: auth
     datasource:
-        hikari:
-            connectionTimeout: 30000.0
-            idleTimeout: 600000.0
-            maxLifetime: 1800000.0
-            driver-class-name: org.h2.Driver
-            jdbc-url: jdbc:h2:mem:member
-            username: sa
-            password: ''
-        url: jdbc:h2:~/member
+        driverClassName: org.h2.Driver
+        url: jdbc:h2:mem:member
         username: sa
+        password: ''
+#        hikari:
+#            connectionTimeout: 30000.0
+#            idleTimeout: 600000.0
+#            maxLifetime: 1800000.0
+#            driver-class-name: org.h2.Driver
+#            jdbc-url: jdbc:h2:mem:member
+#            username: sa
+#            password: ''
     h2:
         console:
             enabled: true
             path: /h2-console
     jpa:
         hibernate:
-            ddl-auto: update
+            ddl-auto: create
         properties:
             hibernate:
                 format_sql: true         # 쿼리 로그 포맷 (정렬)

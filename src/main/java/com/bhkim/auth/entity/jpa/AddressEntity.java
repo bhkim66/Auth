@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.lang.reflect.Member;
+
 @Getter
 @Entity
 @Table(name = "Address")
@@ -32,4 +34,8 @@ public class AddressEntity {
     @NotEmpty
     @Column(name = "NAME")
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "MEMBER_SEQ", nullable = false)
+    private MemberEntity member;
 }

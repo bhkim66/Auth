@@ -5,6 +5,7 @@ logging:
                 type:
                     descriptor:
                         sql: trace
+            springframework: info
 spring:
     application:
         name: auth

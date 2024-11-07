@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Address")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Address {
+public class Address extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

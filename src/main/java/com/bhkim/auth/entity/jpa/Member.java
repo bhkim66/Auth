@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "Member")
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Member extends BaseTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "MEMBER_SEQ")
     private Long seq;
 
@@ -42,6 +44,9 @@ public class Member extends BaseTime {
     @Column(name = "MEMBER_PHONE_NUMBER")
     private String phoneNumber;
 
+    @OneToMany(mappedBy = "member")
+    private List<AuthHistory> authHistoryList;
+
     @Builder
     public Member(String id, String name, int age, TypeEnum sex, String phoneNumber) {
         this.id = id;
@@ -50,4 +55,6 @@ public class Member extends BaseTime {
         this.sex = sex;
         this.phoneNumber = phoneNumber;
     }
+
+
 }

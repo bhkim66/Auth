@@ -23,6 +23,6 @@ public interface MemberService {
      * @param memberInfo 회원가입 필요한 정보
      * @return 성공 여부
      */
-    ApiResponseResult<HttpStatus> SignUp(MemberDto.MemberInfo memberInfo);
+    ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo);
 
 }

@@ -18,7 +18,7 @@ public interface AuthService {
      * @param memberInfo id, pw 로그인 정보
      * @return TOKEN 값
      */
-    ApiResponseResult<AuthDto.Token> SignIn(MemberDto.MemberInfo memberInfo);
+    ApiResponseResult<AuthDto.Token> signIn(MemberDto.MemberInfo memberInfo);
 
     /**
      * 로그아웃
@@ -27,7 +27,7 @@ public interface AuthService {
      *
      * @return 성공 여부
      */
-    ApiResponseResult<HttpStatus> SignOut();
+    ApiResponseResult<HttpStatus> signOut();
 
     /**
      * 토큰 재발행
@@ -41,5 +41,5 @@ public interface AuthService {
      * GET
      * @return 해당 토큰에 해당하는 멤버의 정보
      */
-    ApiResponseResult<MemberDto.MemberInfo> ValidationToken();
+    ApiResponseResult<MemberDto.MemberInfo> validationToken();
 }

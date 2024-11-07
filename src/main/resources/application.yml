@@ -11,7 +11,7 @@ spring:
         name: auth
     datasource:
         driverClassName: org.h2.Driver
-        url: jdbc:h2:mem:member
+        url: jdbc:h2:mem:member;MODE=MySQL
         username: sa
         password: ''
 #        hikari:
@@ -28,7 +28,7 @@ spring:
             path: /h2-console
     jpa:
         hibernate:
-            ddl-auto: create
+            ddl-auto: update
         properties:
             hibernate:
                 format_sql: true         # 쿼리 로그 포맷 (정렬)

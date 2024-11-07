@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ExceptionEnum {
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E500", "예기치 못한 오류가 발생했습니다")
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E500", "예기치 못한 오류가 발생했습니다"),
+    DATABASE_INSERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E505", "예기치 못한 오류가 발생했습니다")
 
     ;
 

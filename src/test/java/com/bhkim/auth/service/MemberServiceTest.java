@@ -4,13 +4,17 @@ import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.MemberDto;
 import com.bhkim.auth.entity.jpa.Member;
 import com.bhkim.auth.repository.MemberRepository;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.bhkim.auth.common.TypeEnum.M;
@@ -33,7 +37,7 @@ class MemberServiceTest {
         return Member.builder()
                 .id("bhkim62")
                 .name("김병호")
-                .age(30)
+                .age(31)
                 .sex(M)
                 .phoneNumber(null)
                 .build();
@@ -55,13 +59,16 @@ class MemberServiceTest {
     }
 
     @Test
+    @Rollback(false)
     void 회원가입() {
         //given
         Member member = getMember();
         MemberDto.MemberInfo memberInfo = getMemberInfo(member);
+        Long fakeSeq = 1L;
 
         // stubbing: memberRepository.save()가 호출되면 member 객체를 반환하도록 설정
         given(memberRepository.save(any())).willReturn(member);
+        ReflectionTestUtils.setField(member, "seq", fakeSeq);
 
         // when
         ApiResponseResult<HttpStatus> result = memberService.signUp(memberInfo);

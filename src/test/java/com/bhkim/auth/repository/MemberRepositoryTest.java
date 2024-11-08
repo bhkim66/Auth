@@ -34,7 +34,7 @@ class MemberRepositoryTest {
 
     @Test
     @DisplayName("멤버 회원가입 테스트")
-    void 멤버_회원가입() {
+    void 멤버_회원가입_DB값_넣기() {
         //given
         Member member = Member.builder()
                 .id("bhkim62")
@@ -48,6 +48,7 @@ class MemberRepositoryTest {
 
         //then
         assertThat(saveMember).isNotNull();
+        assertThat(member.getSeq()).isEqualTo(saveMember.getSeq());
         assertThat(member.getId()).isEqualTo(saveMember.getId());
         assertThat(member.getName()).isEqualTo(saveMember.getName());
         assertThat(member.getAge()).isEqualTo(saveMember.getAge());

@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static com.bhkim.auth.common.ExceptionEnum.DATABASE_INSERT_ERROR;
 
 @Slf4j
@@ -33,13 +31,12 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo) {
         Member member = memberInfo.dtoConvertMember();
-        Member savedMember = memberRepository.save(member);
-        System.out.println("savedMember = " + savedMember.getId());
-        System.out.println("savedMember = " + savedMember.getName());
+        Member savedMember= memberRepository.save(member);
+        System.out.println("savedMember = " + savedMember);
 
-//        if(savedMember.getSeq() < 0) {
-//            ApiResponseResult.failure(DATABASE_INSERT_ERROR);
-//        }
+        if(savedMember.getSeq() < 0) {
+            ApiResponseResult.failure(DATABASE_INSERT_ERROR);
+        }
 
         return ApiResponseResult.success(HttpStatus.OK);
     }

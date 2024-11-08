@@ -2,31 +2,43 @@ package com.bhkim.auth.dto;
 
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.entity.jpa.Member;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+@Getter
 public class MemberDto {
-    @Getter
+    @Builder
+    @AllArgsConstructor
     public static class MemberInfo {
+        @NotBlank
+        @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$", message = "영문과 숫자를 혼합한 6~18자리를 입력해야 합니다")
         private String id;
-        private String name;
-        private int age;
-        private TypeEnum sex;
-        private String phoneNumber;
 
-        @Builder
-        public MemberInfo(String id, String name, int age, TypeEnum sex, String phoneNumber) {
-            this.id = id;
-            this.name = name;
-            this.age = age;
-            this.sex = sex;
-            this.phoneNumber = phoneNumber;
-        }
+        @NotBlank(message = "비밀번호를 입력 해주세요")
+        private String password;
+
+        @NotBlank
+        @Pattern(regexp = "^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]*$", message = "이름은 영문 한글로 이뤄져야 합니다")
+        private String name;
+
+        @Min(value = 1, message = "나이는 1살 이상 150세 이하이여야 합니다")
+        @Max(value= 150, message = "나이는 1살 이상 150세 이하이여야 합니다")
+        private int age;
+
+        @NotNull
+        @Column(name = "MEMBER_SEX")
+        private TypeEnum sex;
+
+        private String phoneNumber;
 
         public Member dtoConvertMember() {
             return Member.builder()
                     .id(this.id)
                     .name(this.name)
+                    .password(this.password)
                     .sex(this.sex)
                     .age(this.age)
                     .phoneNumber(this.phoneNumber)

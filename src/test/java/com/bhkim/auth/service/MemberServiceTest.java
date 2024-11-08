@@ -97,6 +97,19 @@ class MemberServiceTest {
         ApiException ex = assertThrows(ApiException.class, () -> memberService.signUp(memberInfo));
         log.info("ex enum={}", ex.getExceptionEnum());
         assertThat(ex.getExceptionEnum()).isEqualTo(DATABASE_INSERT_ERROR);
+    }
+
+    @Test
+    void 멤버_정보_수정() {
+        //given
+        Member member = getMember();
+        MemberDto.MemberInfo memberInfo = getMemberInfo(member);
+
+        //when
+
+
+        //then
+
 
     }
 

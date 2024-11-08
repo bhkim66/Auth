@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 public class MemberDto {
@@ -34,11 +35,11 @@ public class MemberDto {
 
         private String phoneNumber;
 
-        public Member dtoConvertMember() {
+        public Member dtoConvertMember(PasswordEncoder pe) {
             return Member.builder()
                     .id(this.id)
                     .name(this.name)
-                    .password(this.password)
+                    .password(pe.encode(this.password))
                     .sex(this.sex)
                     .age(this.age)
                     .phoneNumber(this.phoneNumber)

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +21,8 @@ import static com.bhkim.auth.common.ExceptionEnum.DATABASE_INSERT_ERROR;
 //@Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
-    @Autowired
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ApiResponseResult<MemberDto.MemberInfo> getMemberInfo() {
@@ -31,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo) {
-        Member member = memberInfo.dtoConvertMember();
+        Member member = memberInfo.dtoConvertMember(passwordEncoder);
         Member savedMember= memberRepository.save(member);
 
         if(savedMember.getSeq() < 0) {
@@ -39,5 +40,18 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return ApiResponseResult.success(HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponseResult<HttpStatus> setMember(MemberDto.MemberInfo memberInfo) {
+
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public ApiResponseResult<HttpStatus> changePassword(MemberDto.MemberInfo memberInfo) {
+        return null;
     }
 }

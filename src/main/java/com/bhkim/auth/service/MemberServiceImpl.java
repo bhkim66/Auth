@@ -1,5 +1,6 @@
 package com.bhkim.auth.service;
 
+import com.bhkim.auth.common.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.MemberDto;
 import com.bhkim.auth.entity.jpa.Member;
@@ -32,10 +33,9 @@ public class MemberServiceImpl implements MemberService {
     public ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo) {
         Member member = memberInfo.dtoConvertMember();
         Member savedMember= memberRepository.save(member);
-        System.out.println("savedMember = " + savedMember);
 
         if(savedMember.getSeq() < 0) {
-            ApiResponseResult.failure(DATABASE_INSERT_ERROR);
+            throw new ApiException(DATABASE_INSERT_ERROR);
         }
 
         return ApiResponseResult.success(HttpStatus.OK);

@@ -1,6 +1,8 @@
 package com.bhkim.auth.service;
 
+import com.bhkim.auth.common.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
+import com.bhkim.auth.common.ExceptionEnum;
 import com.bhkim.auth.dto.MemberDto;
 import com.bhkim.auth.entity.jpa.Member;
 import com.bhkim.auth.repository.MemberRepository;
@@ -17,11 +19,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static com.bhkim.auth.common.ExceptionEnum.DATABASE_INSERT_ERROR;
 import static com.bhkim.auth.common.TypeEnum.M;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -74,7 +79,7 @@ class MemberServiceTest {
         ApiResponseResult<HttpStatus> result = memberService.signUp(memberInfo);
 
         // then
-        // 반환된 결과가 HttpStatus.OK인지를 확인
+        // 반환된 결과가 성공 인지를 확인
         assertThat(true).isEqualTo(result.isSuccess());
     }
 
@@ -84,17 +89,15 @@ class MemberServiceTest {
         Member member = getMember();
         MemberDto.MemberInfo memberInfo = getMemberInfo(member);
 
-        // stubbing: memberRepository.save()가 호출되면 저장된 member 객체를 반환하도록 설정
-        given(memberRepository.save(any())).willReturn(member);
+        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
+        given(memberRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
 
         // when
-        ReflectionTestUtils.setField(member, "seq", -1L); //Seq가 자동생성이므로 필드에 직접 생성 가능
-
-        ApiResponseResult<HttpStatus> result = memberService.signUp(memberInfo);
-
         // then
-        // 저장 실패 시 failure 응답을 반환하는지 확인
-        assertThat(HttpStatus.INTERNAL_SERVER_ERROR).isEqualTo(result.getE());  // 예시로 실패 상태를 INTERNAL_SERVER_ERROR로 설정
+        ApiException ex = assertThrows(ApiException.class, () -> memberService.signUp(memberInfo));
+        log.info("ex enum={}", ex.getExceptionEnum());
+        assertThat(ex.getExceptionEnum()).isEqualTo(DATABASE_INSERT_ERROR);
+
     }
 
 

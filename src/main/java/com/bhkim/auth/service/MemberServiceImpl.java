@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo) {
-        Member member = memberInfo.dtoConvertMember(passwordEncoder);
+        Member member = Member.dtoConvertMember(memberInfo, passwordEncoder);
         Member savedMember= memberRepository.save(member);
 
         if(savedMember.getSeq() < 0) {
@@ -45,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> setMember(MemberDto.MemberInfo memberInfo) {
-
+        //jwt로 멤버 조회가 필요함
         return null;
     }
 

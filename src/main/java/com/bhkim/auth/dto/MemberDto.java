@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Getter
 public class MemberDto {
     @Builder
+    @Getter
     @AllArgsConstructor
     public static class MemberInfo {
         @NotBlank
@@ -34,16 +35,5 @@ public class MemberDto {
         private TypeEnum sex;
 
         private String phoneNumber;
-
-        public Member dtoConvertMember(PasswordEncoder pe) {
-            return Member.builder()
-                    .id(this.id)
-                    .name(this.name)
-                    .password(pe.encode(this.password))
-                    .sex(this.sex)
-                    .age(this.age)
-                    .phoneNumber(this.phoneNumber)
-                    .build();
-        }
     }
 }

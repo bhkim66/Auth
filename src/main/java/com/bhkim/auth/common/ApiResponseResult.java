@@ -1,5 +1,6 @@
 package com.bhkim.auth.common;
 
+import com.bhkim.auth.exception.ExceptionEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

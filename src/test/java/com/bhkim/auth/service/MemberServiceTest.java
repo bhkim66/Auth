@@ -1,6 +1,6 @@
 package com.bhkim.auth.service;
 
-import com.bhkim.auth.common.ApiException;
+import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.MemberDto;
 import com.bhkim.auth.entity.jpa.Member;
@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static com.bhkim.auth.common.ExceptionEnum.DATABASE_INSERT_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
 import static com.bhkim.auth.common.TypeEnum.M;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -113,7 +113,6 @@ class MemberServiceTest {
         memberService.setMember(memberInfo);
 
         //then
-        assertThat(member.getName()).isNotEqualTo()
 
     }
 

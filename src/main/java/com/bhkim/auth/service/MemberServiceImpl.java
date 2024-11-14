@@ -1,19 +1,18 @@
 package com.bhkim.auth.service;
 
-import com.bhkim.auth.common.ApiException;
+import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.MemberDto;
 import com.bhkim.auth.entity.jpa.Member;
 import com.bhkim.auth.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.bhkim.auth.common.ExceptionEnum.DATABASE_INSERT_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
 
 @Slf4j
 @Service

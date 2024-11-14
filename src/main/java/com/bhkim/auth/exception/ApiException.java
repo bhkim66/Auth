@@ -1,4 +1,4 @@
-package com.bhkim.auth.common;
+package com.bhkim.auth.exception;
 
 import lombok.Getter;
 
@@ -11,7 +11,7 @@ public class ApiException extends RuntimeException {
         this.e = e;
     }
 
-    public ExceptionEnum getExceptionEnum() {
+    public ExceptionEnum getException() {
         return e;
     }
 }

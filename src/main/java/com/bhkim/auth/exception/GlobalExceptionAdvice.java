@@ -1,8 +1,8 @@
-package com.bhkim.auth.common;
+package com.bhkim.auth.exception;
 
+import com.bhkim.auth.common.ApiResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,7 +27,7 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponseResult<?>> handleApiException(ApiException e) {
         log.error("[ApiException] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
-        return ResponseEntity.status(e.getExceptionEnum().getStatus()).body(ApiResponseResult.failure(e.getExceptionEnum()));
+        return ResponseEntity.status(e.getException().getStatus()).body(ApiResponseResult.failure(e.getException()));
     }
 
     //메소드가 잘못되었거나 부적합한 인수를 전달했을 경우 -> 필수 파라미터 없을 때

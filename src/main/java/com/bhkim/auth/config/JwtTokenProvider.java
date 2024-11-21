@@ -40,8 +40,7 @@ public class JwtTokenProvider {
 //    RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public JwtTokenProvider(@Value("${security.jwt.key}") String key) {
-        System.out.println("key = " + key);
+    public JwtTokenProvider() {
 //        byte[] keyBytes = Decoders.BASE64.decode(key);
 //        this.key = Keys.hmacShaKeyFor(keyBytes);
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -79,9 +78,9 @@ public class JwtTokenProvider {
                 .compact();
 
         return TokenInfo.builder()
-                .memId(userInfo.getId())
-                .memSeq(userInfo.getSeq())
-                .memberType(typeList)
+                .userId(userInfo.getId())
+                .userSeq(userInfo.getSeq())
+                .AuthorityList(typeList)
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

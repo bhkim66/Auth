@@ -1,12 +1,11 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.config.JwtTokenProvider;
-import com.bhkim.auth.dto.UserDto;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.mock.WithCustomMockUser;
 import com.bhkim.auth.repository.AuthRepository;
 import com.bhkim.auth.repository.UserRepository;
-import com.bhkim.auth.service.AuthServiceImpl;
+import com.bhkim.auth.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +38,10 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUpMember() {
-        userRepository.save(getMember());
+        userRepository.save(getUser());
     }
 
-    User getMember() {
+    User getUser() {
         return User.builder()
                 .id("bhkim")
                 .name("김병호")
@@ -50,13 +49,6 @@ class AuthControllerTest {
                 .sex(M)
                 .build();
     }
-
-    UserDto.UserInfo getMemberDto() {
-        return UserDto.UserInfo.builder()
-                .member(getMember())
-                .build();
-    }
-
 
     @Test
     @WithCustomMockUser // id = bhkim, role = USER

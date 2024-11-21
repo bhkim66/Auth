@@ -2,7 +2,7 @@ package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.AuthDto;
-import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.repository.AuthRepository;
 import com.bhkim.auth.repository.UserRepository;
@@ -31,7 +31,7 @@ class AuthServiceTest {
     @Autowired
     UserRepository userRepository;
 
-    User getMember() {
+    User getUser() {
         return User.builder()
                 .id("bhkim62")
                 .name("김병호")
@@ -40,9 +40,13 @@ class AuthServiceTest {
                 .build();
     }
 
-    UserDto.UserInfo getMemberInfo(User m) {
-        return UserDto.UserInfo.builder()
-                .member(getMember())
+    UserRequestDTO.UserInfo getUserInfo(User m) {
+        User user = getUser();
+        return UserRequestDTO.UserInfo.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .age(user.getAge())
+                .sex(user.getSex())
                 .build();
     }
 
@@ -50,10 +54,10 @@ class AuthServiceTest {
     void signIn() {
         //given
         Long memberSeq = 1L;
-        User user = getMember();
+        User user = getUser();
         ReflectionTestUtils.setField(user, "seq", memberSeq); //Seq가 자동생성이므로 필드에 직접 생성 가능
 
-        UserDto.UserInfo userInfo = getMemberInfo(user);
+        UserRequestDTO.UserInfo userInfo = getUserInfo(user);
         //mocking
         given(userRepository.save(any())).willReturn(user);
 

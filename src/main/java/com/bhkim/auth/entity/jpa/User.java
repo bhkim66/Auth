@@ -15,9 +15,9 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "User")
+@Table(name = "USERS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTime implements UserDetails {
+public class User extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -25,29 +25,19 @@ public class User extends BaseTime implements UserDetails {
     private Long seq;
 
     @NotBlank
-    @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$", message = "영문과 숫자를 혼합한 6~18자리를 입력해야 합니다")
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     private String id;
 
-//    @NotBlank(message = "비밀번호를 입력 해주세요")
-    @Column(name = "password")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @NotBlank
-    @Pattern(regexp = "^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]*$", message = "이름은 영문 한글로 이뤄져야 합니다")
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Min(value = 1, message = "나이는 1살 이상 150세 이하이여야 합니다")
-    @Max(value= 150, message = "나이는 1살 이상 150세 이하이여야 합니다")
-    @Column(name = "AGE")
+    @Column(name = "AGE", nullable = false)
     private int age;
 
-    @Column(name = "AGE")
-    private List<GrantedAuthority> roles;
-
-    @NotNull
-    @Column(name = "SEX")
+    @Column(name = "SEX", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private TypeEnum sex;
 
@@ -57,33 +47,20 @@ public class User extends BaseTime implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<AuthHistory> authHistoryList;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getUsername() {
-        return "";
-    }
+//    @OneToMany(mappedBy = "user")
+//    private List<GrantedAuthority> roles;
+    @Column(name = "ROLE")
+    private String role;
 
     @Builder
-    public User(String id, String name, int age, TypeEnum sex, String phoneNumber) {
+    public User(String id, String name, int age, TypeEnum sex, String phoneNumber, String role) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.sex = sex;
         this.phoneNumber = phoneNumber;
+        this.role = role;
     }
-
-    public User(Long seq, String id, String password) {
-        this.seq = seq;
-        this.id = id;
-        this.password = password;
-    }
-
-
-
 //    public void setMember(MemberDto.MemberInfo mi) {
 //        this.name = mi.getName();
 //        this.age = mi.getAge();

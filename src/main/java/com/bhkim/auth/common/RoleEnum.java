@@ -2,7 +2,7 @@ package com.bhkim.auth.common;
 
 import java.util.Arrays;
 
-public enum Role {
+public enum RoleEnum {
     SUPER_ADMIN("role_superAdmin"),
     ADMIN("role_admin"),
     USER("role_user");
@@ -11,7 +11,7 @@ public enum Role {
 
     private final String name;
 
-    Role(String name) {
+    RoleEnum(String name) {
         this.name = name;
     }
 

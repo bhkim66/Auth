@@ -1,7 +1,7 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @RequestMapping("/sign-up")
-    public ApiResponseResult<HttpStatus> signUp(@RequestBody @Valid UserDto.UserInfo userInfo) {
+    public ApiResponseResult<HttpStatus> signUp(@RequestBody @Valid UserRequestDTO.UserInfo userInfo) {
         ApiResponseResult<HttpStatus> result = userService.signUp(userInfo);
         return result;
     }

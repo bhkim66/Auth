@@ -1,8 +1,9 @@
-package com.bhkim.auth.service;
+package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.AuthDto;
-import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.dto.UserRequestDTO;
+import com.bhkim.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ public class AuthServiceImpl implements AuthService {
 //    private final AuthRepository authRepository;
 
     @Override
-    public ApiResponseResult<AuthDto.Token> signIn(UserDto.UserInfo userInfo) {
+    public ApiResponseResult<AuthDto.Token> signIn(UserRequestDTO.UserInfo userInfo) {
 
 
 
@@ -33,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponseResult<UserDto.UserInfo> validationToken() {
+    public ApiResponseResult<UserRequestDTO.UserInfo> validationToken() {
         return null;
     }
 }

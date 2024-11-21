@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "Address")
+@Table(name = "ADDRESS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address extends BaseTime {
 
@@ -19,21 +19,21 @@ public class Address extends BaseTime {
     private Long addressSeq;
 
     @NotBlank
-    @Column(name = "ZIPCODE")
+    @Column(name = "ZIPCODE", nullable = false)
     private int zipcode;
 
     @NotBlank
-    @Column(name = "ADDRESS1")
+    @Column(name = "ADDRESS1", nullable = false)
     private String address1;
 
     @Column(name = "ADDRESS2")
     private String address2;
 
     @NotEmpty
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "USER_SEQ", nullable = false)
     private User user;
 }

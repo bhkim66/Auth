@@ -1,10 +1,11 @@
-package com.bhkim.auth.service;
+package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.repository.UserRepository;
+import com.bhkim.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,14 +25,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponseResult<UserDto.UserInfo> getMemberInfo() {
+    public ApiResponseResult<UserRequestDTO.UserInfo> getMemberInfo() {
         return null;
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> signUp(UserDto.UserInfo userInfo) {
-        User savedUser = userRepository.save(userInfo.getUser());
+    public ApiResponseResult<HttpStatus> signUp(UserRequestDTO.UserInfo userInfo) {
+        User savedUser = userRepository.save(userInfo.toEntity());
 
         if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
@@ -42,14 +43,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> setMember(UserDto.UserInfo userInfo) {
+    public ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UserInfo userInfo) {
         //jwt로 멤버 조회가 필요함
         return null;
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> changePassword(UserDto.UserInfo userInfo) {
+    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UserInfo userInfo) {
         return null;
     }
 }

@@ -2,9 +2,10 @@ package com.bhkim.auth.service;
 
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.repository.UserRepository;
+import com.bhkim.auth.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +33,7 @@ class UserServiceTest {
     @Mock
     UserRepository userRepository;
 
-    User getMember() {
+    User getUser() {
         return User.builder()
                 .id("bhkim62")
                 .name("김병호")
@@ -42,7 +43,7 @@ class UserServiceTest {
                 .build();
     }
 
-    User updateMember() {
+    User updateUser() {
         return User.builder()
                 .name("박병호")
                 .age(25)
@@ -51,9 +52,13 @@ class UserServiceTest {
                 .build();
     }
 
-    UserDto.UserInfo getMemberInfo(User user) {
-        return UserDto.UserInfo.builder()
-                .member(getMember())
+    UserRequestDTO.UserInfo getUserInfo(User m) {
+        User user = getUser();
+        return UserRequestDTO.UserInfo.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .age(user.getAge())
+                .sex(user.getSex())
                 .build();
     }
 
@@ -66,8 +71,8 @@ class UserServiceTest {
     @Rollback(false)
     void 회원가입() {
         //given
-        User user = getMember();
-        UserDto.UserInfo userInfo = getMemberInfo(user);
+        User user = getUser();
+        UserRequestDTO.UserInfo userInfo = getUserInfo(user);
         Long fakeSeq = 1L;
 
         // stubbing: memberRepository.save()가 호출되면 member 객체를 반환하도록 설정
@@ -85,8 +90,8 @@ class UserServiceTest {
     @Test
     void 회원가입_실패_저장실패() {
         // given
-        User user = getMember();
-        UserDto.UserInfo userInfo = getMemberInfo(user);
+        User user = getUser();
+        UserRequestDTO.UserInfo userInfo = getUserInfo(user);
 
         // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
         given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
@@ -101,9 +106,9 @@ class UserServiceTest {
     @Test
     void 멤버_정보_수정() {
         //given
-        User user = getMember();
-        User updateUser = updateMember();
-        UserDto.UserInfo userInfo = getMemberInfo(updateUser);
+        User user = getUser();
+        User updateUser = updateUser();
+        UserRequestDTO.UserInfo userInfo = getUserInfo(updateUser);
 
         //when
         memberService.setMember(userInfo);

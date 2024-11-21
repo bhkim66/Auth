@@ -1,9 +1,8 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.MemberDto;
-import com.bhkim.auth.service.MemberService;
-import com.bhkim.auth.service.MemberServiceImpl;
+import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
-public class MemberController {
-    private final MemberService memberService;
+public class UserController {
+    private final UserService userService;
 
     @RequestMapping("/health-check")
     public ApiResponseResult<String> healthCheck() {
@@ -25,8 +24,8 @@ public class MemberController {
     }
 
     @RequestMapping("/sign-up")
-    public ApiResponseResult<HttpStatus> signUp(@RequestBody @Valid MemberDto.MemberInfo memberInfo) {
-        ApiResponseResult<HttpStatus> result = memberService.signUp(memberInfo);
+    public ApiResponseResult<HttpStatus> signUp(@RequestBody @Valid UserDto.UserInfo userInfo) {
+        ApiResponseResult<HttpStatus> result = userService.signUp(userInfo);
         return result;
     }
 

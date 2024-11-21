@@ -34,6 +34,6 @@ public class Address extends BaseTime {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "MEMBER_SEQ", nullable = false)
-    private Member member;
+    @JoinColumn(name = "USER_SEQ", nullable = false)
+    private User user;
 }

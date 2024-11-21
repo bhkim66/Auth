@@ -1,18 +1,13 @@
 package com.bhkim.auth.dto;
 
-import com.bhkim.auth.common.TypeEnum;
-import com.bhkim.auth.entity.jpa.Member;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
+import com.bhkim.auth.entity.jpa.User;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class MemberDto {
+public class UserDto {
 
     @Getter
-    public static class MemberInfo {
+    public static class UserInfo {
         //        @NotBlank
 //        @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$", message = "영문과 숫자를 혼합한 6~18자리를 입력해야 합니다")
 //        private String id;
@@ -33,11 +28,11 @@ public class MemberDto {
 //        private TypeEnum sex;
 //
 //        private String phoneNumber;
-        private Member member;
+        private User user;
 
         @Builder
-        public MemberInfo(Member member) {
-            this.member = member;
+        public UserInfo(User user) {
+            this.user = user;
         }
     }
 

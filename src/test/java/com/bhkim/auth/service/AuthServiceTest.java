@@ -1,12 +1,11 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.dto.AuthDto;
-import com.bhkim.auth.dto.MemberDto;
-import com.bhkim.auth.entity.jpa.Member;
+import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.repository.AuthRepository;
-import com.bhkim.auth.repository.MemberRepository;
+import com.bhkim.auth.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,10 +29,10 @@ class AuthServiceTest {
     AuthRepository authRepository;
 
     @Autowired
-    MemberRepository memberRepository;
+    UserRepository userRepository;
 
-    Member getMember() {
-        return Member.builder()
+    User getMember() {
+        return User.builder()
                 .id("bhkim62")
                 .name("김병호")
                 .age(30)
@@ -41,8 +40,8 @@ class AuthServiceTest {
                 .build();
     }
 
-    MemberDto.MemberInfo getMemberInfo(Member m) {
-        return MemberDto.MemberInfo.builder()
+    UserDto.UserInfo getMemberInfo(User m) {
+        return UserDto.UserInfo.builder()
                 .member(getMember())
                 .build();
     }
@@ -51,15 +50,15 @@ class AuthServiceTest {
     void signIn() {
         //given
         Long memberSeq = 1L;
-        Member member = getMember();
-        ReflectionTestUtils.setField(member, "seq", memberSeq); //Seq가 자동생성이므로 필드에 직접 생성 가능
+        User user = getMember();
+        ReflectionTestUtils.setField(user, "seq", memberSeq); //Seq가 자동생성이므로 필드에 직접 생성 가능
 
-        MemberDto.MemberInfo memberInfo = getMemberInfo(member);
+        UserDto.UserInfo userInfo = getMemberInfo(user);
         //mocking
-        given(memberRepository.save(any())).willReturn(member);
+        given(userRepository.save(any())).willReturn(user);
 
         //when
-        ApiResponseResult<AuthDto.Token> tokenApiResponseResult = authService.signIn(memberInfo);
+        ApiResponseResult<AuthDto.Token> tokenApiResponseResult = authService.signIn(userInfo);
         //then
 //        tokenApiResponseResult
     }

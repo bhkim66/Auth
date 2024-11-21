@@ -18,8 +18,8 @@ public class AuthHistory extends BaseTime {
     private Long authHistorySeq;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "MEMBER_SEQ", nullable = false)
-    private Member member;
+    @JoinColumn(name = "USER_SEQ", nullable = false)
+    private User user;
 
     @NotBlank
     @Column(name = "ACTIVE_DETAIL", nullable = false)

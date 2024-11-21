@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class TokenInfo {
-    private Long memSeq;
-    private String memId;
+    private Long userSeq;
+    private String userId;
     private String grantType;
     private String accessToken;
     private String refreshToken;
@@ -22,9 +22,9 @@ public class TokenInfo {
     private String rtkExpirationDate;
 
     @Builder
-    public TokenInfo(Long memSeq, String memId, String grantType, String accessToken, String refreshToken, LocalDateTime publishTime, List<String> memberType, Long rtkExpirationTime, String rtkExpirationDate) {
-        this.memSeq = memSeq;
-        this.memId = memId;
+    public TokenInfo(Long userSeq, String userId, String grantType, String accessToken, String refreshToken, LocalDateTime publishTime, List<String> memberType, Long rtkExpirationTime, String rtkExpirationDate) {
+        this.userSeq = userSeq;
+        this.userId = userId;
         this.grantType = grantType;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;

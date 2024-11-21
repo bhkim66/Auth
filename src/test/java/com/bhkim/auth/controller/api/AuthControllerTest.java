@@ -1,11 +1,11 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.config.JwtTokenProvider;
-import com.bhkim.auth.dto.MemberDto;
-import com.bhkim.auth.entity.jpa.Member;
+import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.mock.WithCustomMockUser;
 import com.bhkim.auth.repository.AuthRepository;
-import com.bhkim.auth.repository.MemberRepository;
+import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class AuthControllerTest {
     AuthServiceImpl authService;
 
     @MockBean
-    MemberRepository memberRepository;
+    UserRepository userRepository;
 
     @MockBean
     AuthRepository authRepository; // AuthRepository를 모킹
@@ -39,11 +39,11 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUpMember() {
-        memberRepository.save(getMember());
+        userRepository.save(getMember());
     }
 
-    Member getMember() {
-        return Member.builder()
+    User getMember() {
+        return User.builder()
                 .id("bhkim")
                 .name("김병호")
                 .age(20)
@@ -51,8 +51,8 @@ class AuthControllerTest {
                 .build();
     }
 
-    MemberDto.MemberInfo getMemberDto() {
-        return MemberDto.MemberInfo.builder()
+    UserDto.UserInfo getMemberDto() {
+        return UserDto.UserInfo.builder()
                 .member(getMember())
                 .build();
     }

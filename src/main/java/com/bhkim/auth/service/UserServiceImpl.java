@@ -2,9 +2,9 @@ package com.bhkim.auth.service;
 
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.MemberDto;
-import com.bhkim.auth.entity.jpa.Member;
-import com.bhkim.auth.repository.MemberRepository;
+import com.bhkim.auth.dto.UserDto;
+import com.bhkim.auth.entity.jpa.User;
+import com.bhkim.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,22 +18,22 @@ import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
 @Service
 @RequiredArgsConstructor
 //@Transactional(readOnly = true)
-public class MemberServiceImpl implements MemberService {
+public class UserServiceImpl implements UserService {
 
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponseResult<MemberDto.MemberInfo> getMemberInfo() {
+    public ApiResponseResult<UserDto.UserInfo> getMemberInfo() {
         return null;
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo) {
-        Member savedMember= memberRepository.save(memberInfo.getMember());
+    public ApiResponseResult<HttpStatus> signUp(UserDto.UserInfo userInfo) {
+        User savedUser = userRepository.save(userInfo.getUser());
 
-        if(savedMember.getSeq() < 0) {
+        if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
         }
 
@@ -42,14 +42,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> setMember(MemberDto.MemberInfo memberInfo) {
+    public ApiResponseResult<HttpStatus> setMember(UserDto.UserInfo userInfo) {
         //jwt로 멤버 조회가 필요함
         return null;
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> changePassword(MemberDto.MemberInfo memberInfo) {
+    public ApiResponseResult<HttpStatus> changePassword(UserDto.UserInfo userInfo) {
         return null;
     }
 }

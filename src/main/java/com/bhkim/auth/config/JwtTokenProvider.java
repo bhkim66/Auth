@@ -1,7 +1,7 @@
 package com.bhkim.auth.config;
 
 import com.bhkim.auth.entity.TokenInfo;
-import com.bhkim.auth.entity.jpa.Member;
+import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +48,7 @@ public class JwtTokenProvider {
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public TokenInfo generateToken(Member memberInfo) {
+    public TokenInfo generateToken(User userInfo) {
         // Access Token 생성
         List<String> typeList = new ArrayList<>();
 
@@ -62,9 +61,9 @@ public class JwtTokenProvider {
 
         String accessToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT") // 토큰 Header 설정 type = JWT 기본값
-                .setSubject(memberInfo.getId()) // 발급 받는 주체 구분 값
+                .setSubject(userInfo.getId()) // 발급 받는 주체 구분 값
                 .setIssuer("auth.bhkim.com") // 토큰 발급자
-                .claim(MEMBER_SEQ , memberInfo.getSeq()) // payload 값
+                .claim(MEMBER_SEQ , userInfo.getSeq()) // payload 값
                 .setExpiration(accessTokenExpiresIn) // 만료 시간
                 .signWith(key, SignatureAlgorithm.HS256) // 사용 암호 알고리즘
                 .compact();
@@ -73,15 +72,15 @@ public class JwtTokenProvider {
 
         String refreshToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(memberInfo.getId())
+                .setSubject(userInfo.getId())
                 .setIssuer("auth.bhkim.com")
                 .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return TokenInfo.builder()
-                .memId(memberInfo.getId())
-                .memSeq(memberInfo.getSeq())
+                .memId(userInfo.getId())
+                .memSeq(userInfo.getSeq())
                 .memberType(typeList)
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
@@ -98,7 +97,7 @@ public class JwtTokenProvider {
         Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 

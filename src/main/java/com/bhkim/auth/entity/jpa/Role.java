@@ -16,8 +16,8 @@ public class Role {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "MEMBER_SEQ")
-    private Member member;
+    @JoinColumn(name = "USER_SEQ")
+    private User user;
 
     @Enumerated
     @Column(name = "NAME")

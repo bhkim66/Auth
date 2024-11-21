@@ -53,11 +53,7 @@ class MemberServiceTest {
 
     MemberDto.MemberInfo getMemberInfo(Member member) {
         return MemberDto.MemberInfo.builder()
-                .id(member.getId())
-                .name(member.getName())
-                .age(member.getAge())
-                .sex(member.getSex())
-                .phoneNumber(member.getPhoneNumber())
+                .member(getMember())
                 .build();
     }
 
@@ -98,8 +94,8 @@ class MemberServiceTest {
         // when
         // then
         ApiException ex = assertThrows(ApiException.class, () -> memberService.signUp(memberInfo));
-        log.info("ex enum={}", ex.getExceptionEnum());
-        assertThat(ex.getExceptionEnum()).isEqualTo(DATABASE_INSERT_ERROR);
+        log.info("ex enum={}", ex.getException());
+        assertThat(ex.getException()).isEqualTo(DATABASE_INSERT_ERROR);
     }
 
     @Test

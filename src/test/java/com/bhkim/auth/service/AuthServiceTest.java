@@ -43,11 +43,7 @@ class AuthServiceTest {
 
     MemberDto.MemberInfo getMemberInfo(Member m) {
         return MemberDto.MemberInfo.builder()
-                .id(m.getId())
-                .name(m.getName())
-                .age(m.getAge())
-                .sex(m.getSex())
-                .phoneNumber(m.getPhoneNumber())
+                .member(getMember())
                 .build();
     }
 

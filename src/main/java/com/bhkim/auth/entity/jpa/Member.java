@@ -1,5 +1,6 @@
 package com.bhkim.auth.entity.jpa;
 
+import com.bhkim.auth.common.Role;
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.dto.MemberDto;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class Member extends BaseTime {
     @Column(name = "MEMBER_ID")
     private String id;
 
-    @NotBlank(message = "비밀번호를 입력 해주세요")
+//    @NotBlank(message = "비밀번호를 입력 해주세요")
     @Column(name = "password")
     private String password;
 
@@ -42,6 +44,9 @@ public class Member extends BaseTime {
     @Column(name = "MEMBER_AGE")
     private int age;
 
+    @Column(name = "MEMBER_AGE")
+    private List<GrantedAuthority> roles;
+
     @NotNull
     @Column(name = "MEMBER_SEX")
     @Enumerated(value = EnumType.STRING)
@@ -54,30 +59,18 @@ public class Member extends BaseTime {
     private List<AuthHistory> authHistoryList;
 
     @Builder
-    public Member(String id, String password, String name, int age, TypeEnum sex, String phoneNumber) {
+    public Member(String id, String name, int age, TypeEnum sex, String phoneNumber) {
         this.id = id;
-        this.password = password;
         this.name = name;
         this.age = age;
         this.sex = sex;
         this.phoneNumber = phoneNumber;
     }
 
-    public static Member dtoConvertMember(MemberDto.MemberInfo mi, PasswordEncoder pe) {
-        return Member.builder()
-                .id(mi.getId())
-                .name(mi.getName())
-                .password(pe.encode(mi.getPassword()))
-                .sex(mi.getSex())
-                .age(mi.getAge())
-                .phoneNumber(mi.getPhoneNumber())
-                .build();
-    }
-
-    public void setMember(MemberDto.MemberInfo mi) {
-        this.name = mi.getName();
-        this.age = mi.getAge();
-        this.sex = mi.getSex();
-        this.phoneNumber = mi.getPhoneNumber();
-    }
+//    public void setMember(MemberDto.MemberInfo mi) {
+//        this.name = mi.getName();
+//        this.age = mi.getAge();
+//        this.sex = mi.getSex();
+//        this.phoneNumber = mi.getPhoneNumber();
+//    }
 }

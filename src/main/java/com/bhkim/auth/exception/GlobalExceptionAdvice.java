@@ -24,7 +24,7 @@ public class GlobalExceptionAdvice {
     }
 
     // Custom 오류에 대한 처리
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponseResult<?>> handleApiException(ApiException e) {
         log.error("[ApiException] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
         return ResponseEntity.status(e.getException().getStatus()).body(ApiResponseResult.failure(e.getException()));

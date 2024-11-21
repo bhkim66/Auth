@@ -37,10 +37,10 @@ server:
     servlet:
         context-path: /api
 
+
 security:
     jwt:
-        secret:
-            key: "4a9d8f41b365a9c5e33e3a2c5e16a598"
+        key: "4a9d8f41b365a9c5e33e3a2c5e16a598"
 
 logging:
     level:

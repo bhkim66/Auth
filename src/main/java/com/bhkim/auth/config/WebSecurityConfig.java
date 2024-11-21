@@ -38,17 +38,17 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/id/duplication-check", "/api/auth/mem-cert", "/api/**/reissue-access", "/api/auth/sign-out/home").permitAll()
-                                .anyRequest().permitAll()
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/api/auth/role").hasRole("USER")
+                        .requestMatchers("/api/auth/**", "/api/member/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
-            .build();
+                .build();
     }
 
     @Bean

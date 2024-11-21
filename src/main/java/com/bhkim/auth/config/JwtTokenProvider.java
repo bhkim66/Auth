@@ -1,11 +1,9 @@
 package com.bhkim.auth.config;
 
-import com.bhkim.auth.entity.PropertiesValue;
 import com.bhkim.auth.entity.TokenInfo;
 import com.bhkim.auth.entity.jpa.Member;
 import com.bhkim.auth.exception.ApiException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +27,6 @@ import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-    @Value("${spring.config.activate.on-profile}")
-    private String profile;
-
 
     private static final String MEMBER_SEQ = "seq";
     private static final String BEARER_TYPE = "Bearer";
@@ -40,18 +35,17 @@ public class JwtTokenProvider {
     private static final long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
 
     private final Key key;
-    private final PropertiesValue properties;
-
+//    PropertiesValue properties
 
 //    @Autowired
 //    RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public JwtTokenProvider(PropertiesValue properties) {
-        this.properties = properties;
-        System.out.println("properties = " + properties.getKey());
-        byte[] keyBytes = Decoders.BASE64.decode(properties.getKey());
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+    public JwtTokenProvider(@Value("${security.jwt.key}") String key) {
+        System.out.println("key = " + key);
+//        byte[] keyBytes = Decoders.BASE64.decode(key);
+//        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
@@ -60,11 +54,11 @@ public class JwtTokenProvider {
         List<String> typeList = new ArrayList<>();
 
         Date accessTokenExpiresIn = null;
-        if("local".equals(profile) ) {
+//        if("local".equals(profile) ) {
             accessTokenExpiresIn = new Date((new Date()).getTime() + ACCESS_TOKEN_EXPIRE_TIME_LOCAL);
-        } else {
-            accessTokenExpiresIn = new Date((new Date()).getTime() + ACCESS_TOKEN_EXPIRE_TIME);
-        }
+//        } else {
+//            accessTokenExpiresIn = new Date((new Date()).getTime() + ACCESS_TOKEN_EXPIRE_TIME);
+//        }
 
         String accessToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT") // 토큰 Header 설정 type = JWT 기본값

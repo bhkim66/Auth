@@ -31,8 +31,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> signUp(MemberDto.MemberInfo memberInfo) {
-        Member member = Member.dtoConvertMember(memberInfo, passwordEncoder);
-        Member savedMember= memberRepository.save(member);
+        Member savedMember= memberRepository.save(memberInfo.getMember());
 
         if(savedMember.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);

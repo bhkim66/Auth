@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final AuthRepository authRepository;
+//    private final AuthRepository authRepository;
 
     @Override
     public ApiResponseResult<AuthDto.Token> signIn(MemberDto.MemberInfo memberInfo) {

@@ -37,10 +37,9 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/auth/role").hasRole("USER")
-                        .requestMatchers("/api/auth/**", "/api/member/**").permitAll()
+                        .requestMatchers("/auth/role").hasRole("USER")
+                        .requestMatchers("/api/member/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->

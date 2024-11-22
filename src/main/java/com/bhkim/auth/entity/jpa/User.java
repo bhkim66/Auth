@@ -53,8 +53,9 @@ public class User extends BaseTime {
     private String role;
 
     @Builder
-    public User(String id, String name, int age, TypeEnum sex, String phoneNumber, String role) {
+    public User(String id, String password, String name, int age, TypeEnum sex, String phoneNumber, String role) {
         this.id = id;
+        this.password = password;
         this.name = name;
         this.age = age;
         this.sex = sex;

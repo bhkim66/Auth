@@ -14,7 +14,7 @@ public class WitchCustomMockUserSecurityContextFactory implements WithSecurityCo
     public SecurityContext createSecurityContext(WithCustomMockUser annotation) {
         String id = annotation.id();
 
-        Authentication auth = new UsernamePasswordAuthenticationToken(id, "", List.of(new SimpleGrantedAuthority("ADMIN")));
+        Authentication auth = new UsernamePasswordAuthenticationToken(id, "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
 
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(auth);

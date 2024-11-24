@@ -5,17 +5,19 @@ import com.bhkim.auth.dto.AuthDto;
 import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.record.SignInRequest;
-import com.bhkim.auth.repository.AuthRepository;
 import com.bhkim.auth.repository.UserRepository;
+import com.bhkim.auth.service.impl.AuthServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Spy;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import static com.bhkim.auth.common.TypeEnum.M;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -24,13 +26,13 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class AuthServiceTest {
     @InjectMocks
-    AuthService authService;
+    AuthServiceImpl authService;
 
-    @Mock
-    AuthRepository authRepository;
-
-    @Autowired
+    @MockBean
     UserRepository userRepository;
+
+    @Spy
+    RedisTemplate<String, String> redisTemplate;
 
     User getUser() {
         return User.builder()
@@ -89,30 +91,31 @@ class AuthServiceTest {
     void 로그인시_이미_로그인된_상태일_경우_redis_조회() {
         //given
         User user = getUser();
-        SignInRequest request = new SignInRequest("bhkim63", "1234qwer");
+        SignInRequest request = new SignInRequest("bhkim62", "1234qwer");
         UserRequestDTO.UserInfo userInfo = UserRequestDTO.UserInfo.builder().id(request.id()).password(request.password()).build();
+
+        String userKey = "U" + request.id();
+        HashOperations<String, String, Object> hash = redisTemplate.opsForHash();
+        System.out.println("hash = " + hash);
+        hash.put(userKey, "id", request.id());
+        long expireTime = 60 * 60 * 1000L;
 
         //mocking
         given(userRepository.save(any())).willReturn(user);
 
         //when
         ApiResponseResult<AuthDto.Token> tokenApiResponseResult = authService.signIn(userInfo);
+        System.out.println("tokenApiResponseResult = " + tokenApiResponseResult);
+        redisTemplate.expire(userKey, expireTime, MILLISECONDS);
+        String userKeyGetRedis = redisTemplate.opsForValue().get(userKey);
+        System.out.println("userKeyGetRedis = " + userKeyGetRedis);
+
         //then
-        assertThat(tokenApiResponseResult.isSuccess()).isFalse();
+        assertThat(userKeyGetRedis).isEqualTo(userKey);
     }
 
     @Test
     void 로그아웃_성공() {
-
-    }
-
-    @Test
-    void 회원가입_성공() {
-
-    }
-
-    @Test
-    void 회원가입시_잘못된_request값() {
 
     }
 

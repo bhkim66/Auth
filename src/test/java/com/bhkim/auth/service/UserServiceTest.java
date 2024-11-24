@@ -88,7 +88,7 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입_실패_저장실패() {
+    void 회원가입_잘못된_정보_값_전달() {
         // given
         User user = getUser();
         UserRequestDTO.UserInfo userInfo = getUserInfo(user);
@@ -104,7 +104,21 @@ class UserServiceTest {
     }
 
     @Test
-    void 멤버_정보_수정() {
+    void 멤버_정보_수정_성공() {
+        //given
+        User user = getUser();
+        User updateUser = updateUser();
+        UserRequestDTO.UserInfo userInfo = getUserInfo(updateUser);
+
+        //when
+        memberService.setMember(userInfo);
+
+        //then
+
+    }
+
+    @Test
+    void 멤버_정보_수정_실패() {
         //given
         User user = getUser();
         User updateUser = updateUser();

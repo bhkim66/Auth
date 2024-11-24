@@ -1,8 +1,7 @@
 package com.bhkim.auth.controller.api;
 
-import com.bhkim.auth.config.JwtTokenProvider;
+import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.entity.jpa.User;
-import com.bhkim.auth.mock.WithCustomMockUser;
 import com.bhkim.auth.repository.AuthRepository;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.AuthServiceImpl;

@@ -1,4 +1,4 @@
-package com.bhkim.auth.config;
+package com.bhkim.auth.config.security;
 
 import com.bhkim.auth.entity.TokenInfo;
 import com.bhkim.auth.entity.jpa.User;
@@ -8,7 +8,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

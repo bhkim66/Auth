@@ -1,4 +1,4 @@
-package com.bhkim.auth.config;
+package com.bhkim.auth.config.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

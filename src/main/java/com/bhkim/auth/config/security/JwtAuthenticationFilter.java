@@ -1,4 +1,4 @@
-package com.bhkim.auth.config;
+package com.bhkim.auth.config.security;
 
 import com.bhkim.auth.exception.ApiException;
 import io.jsonwebtoken.JwtException;

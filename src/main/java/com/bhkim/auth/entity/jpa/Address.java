@@ -33,7 +33,7 @@ public class Address extends BaseTime {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_SEQ", nullable = false)
     private User user;
 }

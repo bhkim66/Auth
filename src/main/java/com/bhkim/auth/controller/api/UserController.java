@@ -24,8 +24,8 @@ public class UserController {
     }
 
     @RequestMapping("/sign-up")
-    public ApiResponseResult<HttpStatus> signUp(@RequestBody @Valid UserRequestDTO.UserInfo userInfo) {
-        ApiResponseResult<HttpStatus> result = userService.signUp(userInfo);
+    public ApiResponseResult<HttpStatus> signUp(@RequestBody @Valid UserRequestDTO.Signup signup) {
+        ApiResponseResult<HttpStatus> result = userService.signUp(signup);
         return result;
     }
 

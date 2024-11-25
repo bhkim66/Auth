@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class AuthDto {
+public class AuthDTO {
     public static class Token {
         private String accessToken;
         private String refreshToken;

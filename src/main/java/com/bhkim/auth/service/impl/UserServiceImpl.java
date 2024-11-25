@@ -1,8 +1,8 @@
 package com.bhkim.auth.service.impl;
 
+import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.UserService;
@@ -25,14 +25,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponseResult<UserRequestDTO.UserInfo> getMemberInfo() {
+    public ApiResponseResult<UserRequestDTO.MemberInfo> getMemberInfo() {
         return null;
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> signUp(UserRequestDTO.UserInfo userInfo) {
-        User savedUser = userRepository.save(userInfo.toEntity());
+    public ApiResponseResult<HttpStatus> signUp(UserRequestDTO.Signup signup) {
+        User savedUser = userRepository.save(signup.toEntity());
 
         if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
@@ -42,15 +42,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UserInfo userInfo) {
+    public ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UpdateMemberInfo updateMemberInfo) {
         //jwt로 멤버 조회가 필요함
         return null;
     }
 
     @Override
-    @Transactional
-    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UserInfo userInfo) {
+    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword) {
         return null;
     }
 }

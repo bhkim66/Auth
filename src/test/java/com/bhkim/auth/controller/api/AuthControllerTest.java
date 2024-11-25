@@ -21,7 +21,7 @@ import static com.bhkim.auth.common.TypeEnum.M;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @Slf4j
-@ActiveProfiles("local") //테스트시 실행할 profile
+@ActiveProfiles("default") //테스트시 실행할 profile
 @WebMvcTest(controllers = AuthController.class)
 class AuthControllerTest {
     @Autowired

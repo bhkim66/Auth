@@ -44,6 +44,13 @@ public class User extends BaseTime {
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
+    @Column(name = "STATUS")
+    @Enumerated(value = EnumType.STRING)
+    private TypeEnum status;
+
+    @Column(name = "ACCESS_CODE")
+    private String accessCode;
+
     @OneToMany(mappedBy = "user")
     private List<AuthHistory> authHistoryList;
 
@@ -53,14 +60,17 @@ public class User extends BaseTime {
     private String role;
 
     @Builder
-    public User(String id, String password, String name, int age, TypeEnum sex, String phoneNumber, String role) {
-        this.id = id;
-        this.password = password;
-        this.name = name;
-        this.age = age;
-        this.sex = sex;
-        this.phoneNumber = phoneNumber;
+    public User(String role, String accessCode, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id, Long seq) {
         this.role = role;
+        this.accessCode = accessCode;
+        this.status = status;
+        this.phoneNumber = phoneNumber;
+        this.sex = sex;
+        this.age = age;
+        this.name = name;
+        this.password = password;
+        this.id = id;
+        this.seq = seq;
     }
 //    public void setMember(MemberDto.MemberInfo mi) {
 //        this.name = mi.getName();

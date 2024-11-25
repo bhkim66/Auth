@@ -1,9 +1,10 @@
 package com.bhkim.auth.service;
 
+import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
+import com.bhkim.auth.record.SignUpRequest;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +13,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static com.bhkim.auth.common.TypeEnum.PENDING;
 import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
 import static com.bhkim.auth.common.TypeEnum.M;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -32,6 +36,7 @@ class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
+
 
     User getUser() {
         return User.builder()
@@ -52,9 +57,9 @@ class UserServiceTest {
                 .build();
     }
 
-    UserRequestDTO.UserInfo getUserInfo(User m) {
+    UserRequestDTO.Signup getUserInfo(User m) {
         User user = getUser();
-        return UserRequestDTO.UserInfo.builder()
+        return UserRequestDTO.Signup.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .age(user.getAge())
@@ -71,16 +76,22 @@ class UserServiceTest {
     @Rollback(false)
     void 회원가입() {
         //given
-        User user = getUser();
-        UserRequestDTO.UserInfo userInfo = getUserInfo(user);
-        Long fakeSeq = 1L;
+        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
+        UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
+                .id(signup.id())
+                .password(signup.password())
+                .name(signup.name())
+                .age(signup.age())
+                .sex(signup.sex())
+                .phoneNumber(signup.phoneNumber())
+                .build();
+
 
         // stubbing: memberRepository.save()가 호출되면 member 객체를 반환하도록 설정
-        given(userRepository.save(any())).willReturn(user);
-        ReflectionTestUtils.setField(user, "seq", fakeSeq);
+        given(userRepository.save(any())).willReturn(signup);
 
         // when
-        ApiResponseResult<HttpStatus> result = memberService.signUp(userInfo);
+        ApiResponseResult<HttpStatus> result = memberService.signUp(signupDTO);
 
         // then
         // 반환된 결과가 성공 인지를 확인
@@ -88,48 +99,74 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입_잘못된_정보_값_전달() {
+    void 회원가입_중복id_값_전달_실패() {
         // given
-        User user = getUser();
-        UserRequestDTO.UserInfo userInfo = getUserInfo(user);
+        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
+        UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
+                .id(signup.id())
+                .password(signup.password())
+                .name(signup.name())
+                .age(signup.age())
+                .sex(signup.sex())
+                .phoneNumber(signup.phoneNumber())
+                .build();
 
         // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
         given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
 
         // when
         // then
-        ApiException ex = assertThrows(ApiException.class, () -> memberService.signUp(userInfo));
-        log.info("ex enum={}", ex.getException());
-        assertThat(ex.getException()).isEqualTo(DATABASE_INSERT_ERROR);
+        assertThatThrownBy(() -> memberService.signUp(signupDTO)).isInstanceOf(ApiException.class).hasMessage("데이터 INSERT ERROR 발생");
     }
 
     @Test
-    void 멤버_정보_수정_성공() {
-        //given
-        User user = getUser();
-        User updateUser = updateUser();
-        UserRequestDTO.UserInfo userInfo = getUserInfo(updateUser);
+    void 회원가입_인증메일_인증_실패() {
+        // given
+        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
+        User.UserBuilder user = User.builder()
+                .id(signup.id())
+                .name(signup.name())
+                .age(signup.age())
+                .sex(signup.sex())
+                .phoneNumber(signup.phoneNumber())
+                .status(PENDING)
+                .accessCode("1234asdf-basdfwqwer-asdfw");
 
-        //when
-        memberService.setMember(userInfo);
+        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
+        given(userRepository.save(any())).willReturn(user);
 
-        //then
+        // when
 
+        // then
     }
 
-    @Test
-    void 멤버_정보_수정_실패() {
-        //given
-        User user = getUser();
-        User updateUser = updateUser();
-        UserRequestDTO.UserInfo userInfo = getUserInfo(updateUser);
-
-        //when
-        memberService.setMember(userInfo);
-
-        //then
-
-    }
+//    @Test
+//    void 멤버_정보_수정_성공() {
+//        //given
+//        User user = getUser();
+//        User updateUser = updateUser();
+//        UserRequestDTO.Signup signup = getUserInfo(updateUser);
+//
+//        //when
+//        memberService.setMember();
+//
+//        //then
+//
+//    }
+//
+//    @Test
+//    void 멤버_정보_수정_실패() {
+//        //given
+//        User user = getUser();
+//        User updateUser = updateUser();
+//        UserRequestDTO.Signup signup = getUserInfo(updateUser);
+//
+//        //when
+//        memberService.setMember();
+//
+//        //then
+//
+//    }
 
 
 }

@@ -1,7 +1,7 @@
 package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.AuthDto;
+import com.bhkim.auth.dto.AuthDTO;
 import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class AuthServiceImpl implements AuthService {
 //    private final AuthRepository authRepository;
 
     @Override
-    public ApiResponseResult<AuthDto.Token> signIn(UserRequestDTO.UserInfo userInfo) {
+    public ApiResponseResult<AuthDTO.Token> signIn(UserRequestDTO.Signup signup) {
 
 
 
@@ -29,12 +29,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponseResult<AuthDto.Token> reissueToken() {
+    public ApiResponseResult<AuthDTO.Token> reissueToken() {
         return null;
     }
 
     @Override
-    public ApiResponseResult<UserRequestDTO.UserInfo> validationToken() {
+    public ApiResponseResult<UserRequestDTO.Signup> validationToken() {
         return null;
     }
 }

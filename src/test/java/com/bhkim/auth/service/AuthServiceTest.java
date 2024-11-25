@@ -1,7 +1,7 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.AuthDto;
+import com.bhkim.auth.dto.AuthDTO;
 import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.record.SignInRequest;
@@ -44,9 +44,9 @@ class AuthServiceTest {
                 .build();
     }
 
-    UserRequestDTO.UserInfo getUserInfo(User m) {
+    UserRequestDTO.Signup getUserInfo(User m) {
         User user = getUser();
-        return UserRequestDTO.UserInfo.builder()
+        return UserRequestDTO.Signup.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .age(user.getAge())
@@ -59,13 +59,13 @@ class AuthServiceTest {
         //given
         User user = getUser();
         SignInRequest request = new SignInRequest("bhkim62", "1234qwer");
-        UserRequestDTO.UserInfo userInfo = UserRequestDTO.UserInfo.builder().id(request.id()).password(request.password()).build();
+        UserRequestDTO.Signup signup = UserRequestDTO.Signup.builder().id(request.id()).password(request.password()).build();
 
         //mocking
         given(userRepository.save(any())).willReturn(user);
 
         //when
-        ApiResponseResult<AuthDto.Token> tokenApiResponseResult = authService.signIn(userInfo);
+        ApiResponseResult<AuthDTO.Token> tokenApiResponseResult = authService.signIn(signup);
         //then
         assertThat(tokenApiResponseResult.isSuccess()).isTrue();
 
@@ -76,13 +76,13 @@ class AuthServiceTest {
         //given
         User user = getUser();
         SignInRequest request = new SignInRequest("bhkim62", "1234qwer");
-        UserRequestDTO.UserInfo userInfo = UserRequestDTO.UserInfo.builder().id(request.id()).password(request.password()).build();
+        UserRequestDTO.Signup signup = UserRequestDTO.Signup.builder().id(request.id()).password(request.password()).build();
 
         //mocking
         given(userRepository.save(any())).willReturn(user);
 
         //when
-        ApiResponseResult<AuthDto.Token> tokenApiResponseResult = authService.signIn(userInfo);
+        ApiResponseResult<AuthDTO.Token> tokenApiResponseResult = authService.signIn(signup);
         //then
         assertThat(tokenApiResponseResult.isSuccess()).isFalse();
     }
@@ -92,7 +92,7 @@ class AuthServiceTest {
         //given
         User user = getUser();
         SignInRequest request = new SignInRequest("bhkim62", "1234qwer");
-        UserRequestDTO.UserInfo userInfo = UserRequestDTO.UserInfo.builder().id(request.id()).password(request.password()).build();
+        UserRequestDTO.Signup signup = UserRequestDTO.Signup.builder().id(request.id()).password(request.password()).build();
 
         String userKey = "U" + request.id();
         HashOperations<String, String, Object> hash = redisTemplate.opsForHash();
@@ -104,7 +104,7 @@ class AuthServiceTest {
         given(userRepository.save(any())).willReturn(user);
 
         //when
-        ApiResponseResult<AuthDto.Token> tokenApiResponseResult = authService.signIn(userInfo);
+        ApiResponseResult<AuthDTO.Token> tokenApiResponseResult = authService.signIn(signup);
         System.out.println("tokenApiResponseResult = " + tokenApiResponseResult);
         redisTemplate.expire(userKey, expireTime, MILLISECONDS);
         String userKeyGetRedis = redisTemplate.opsForValue().get(userKey);

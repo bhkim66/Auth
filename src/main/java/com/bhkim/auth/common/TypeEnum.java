@@ -8,8 +8,10 @@ import static com.bhkim.auth.common.ConstDef.*;
 
 public enum TypeEnum {
     M(Arrays.asList(SEX_TYPE_MALE)),
-    F(Arrays.asList(SEX_TYPE_FEMALE))
+    F(Arrays.asList(SEX_TYPE_FEMALE)),
 
+    PENDING(Arrays.asList(PENDING_STATUS)),
+    CERTIFIED(Arrays.asList(CERTIFIED_STATUS))
     ;
 
     private List<String> titleList;

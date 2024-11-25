@@ -1,7 +1,7 @@
 package com.bhkim.auth.service;
 
-import com.bhkim.auth.dto.UserRequestDTO;
 import com.bhkim.auth.common.ApiResponseResult;
+import com.bhkim.auth.dto.UserRequestDTO;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -13,29 +13,29 @@ public interface UserService {
      * GET
      * @return 멤버 INFO 값
      */
-    ApiResponseResult<UserRequestDTO.UserInfo> getMemberInfo();
+    ApiResponseResult<UserRequestDTO.MemberInfo> getMemberInfo();
 
     /**
      * 회원가입
      * POST
-     * @param userInfo 회원가입 필요한 정보
+     * @param signup 회원가입 필요한 정보
      * @return 성공 여부
      */
-    ApiResponseResult<HttpStatus> signUp(UserRequestDTO.UserInfo userInfo);
+    ApiResponseResult<HttpStatus> signUp(UserRequestDTO.Signup signup);
 
     /**
      * 유저 정보 변경
      * PUT
-     * @param userInfo 회원가입 필요한 정보
+     * @param updateMemberInfo 유저 정보 변경 정보
      * @return 성공 여부
      */
-    ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UserInfo userInfo);
+    ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UpdateMemberInfo updateMemberInfo);
 
     /**
      * 비밀번호 변경
      * PUT
-     * @param userInfo 회원가입 필요한 정보
+     * @param updatePassword 회원가입 필요한 정보
      * @return 성공 여부
      */
-    ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UserInfo userInfo);
+    ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword);
 }

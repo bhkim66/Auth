@@ -19,18 +19,18 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void beforeEach() {
-        //멤버 한명 추가
-        User user = User.builder()
-                .id("bhkim62")
-                .name("김병호")
-                .age(30)
-                .sex(M)
-                .phoneNumber(null)
-                .build();
-        userRepository.save(user);
-    }
+//    @BeforeEach
+//    void beforeEach() {
+//        //멤버 한명 추가
+//        User user = User.builder()
+//                .id("bhkim62")
+//                .name("김병호")
+//                .age(30)
+//                .sex(M)
+//                .phoneNumber(null)
+//                .build();
+//        userRepository.save(user);
+//    }
 
     @Test
     @DisplayName("멤버 회원가입 테스트")

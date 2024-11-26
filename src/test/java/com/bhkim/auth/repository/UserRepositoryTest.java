@@ -53,7 +53,6 @@ class UserRepositoryTest {
         assertThat(user.getName()).isEqualTo(saveUser.getName());
         assertThat(user.getAge()).isEqualTo(saveUser.getAge());
         assertThat(user.getSex()).isEqualTo(saveUser.getSex());
-        log.info("saveMember createdTime = {}", String.valueOf(saveUser.getCreatedTime()));
     }
 
     @Test

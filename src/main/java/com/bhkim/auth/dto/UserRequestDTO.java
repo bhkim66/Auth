@@ -1,10 +1,16 @@
 package com.bhkim.auth.dto;
 
+import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.entity.jpa.User;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.UUID;
+
+import static com.bhkim.auth.common.RoleEnum.*;
+import static com.bhkim.auth.common.TypeEnum.*;
 
 @Data
 public class UserRequestDTO {
@@ -39,13 +45,17 @@ public class UserRequestDTO {
 
         private String phoneNumber;
 
-        public User toEntity() {
+        public User toUserEntity() {
             return User.builder()
                     .id(this.id)
                     .name(this.name)
+                    .password(this.password)
                     .sex(this.sex)
                     .age(this.age)
                     .phoneNumber(this.phoneNumber)
+                    .role(USER.toString())
+                    .status(PENDING)
+                    .accessCode(UUID.randomUUID().toString())
                     .build();
         }
     }

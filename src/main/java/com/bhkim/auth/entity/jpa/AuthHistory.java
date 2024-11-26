@@ -1,5 +1,6 @@
 package com.bhkim.auth.entity.jpa;
 
+import com.bhkim.auth.entity.jpa.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "AUTH_HISTORY")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuthHistory extends BaseTime {
+public class AuthHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

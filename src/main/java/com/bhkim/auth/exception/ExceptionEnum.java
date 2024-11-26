@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
+/**
+ * The enum Exception enum.
+ */
 @Getter
 @RequiredArgsConstructor
 @ToString
@@ -14,10 +17,14 @@ public enum ExceptionEnum {
     IO_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "E510", "잘못된 값 입니다"),
 
     /** 인증되지 않은 멤버 접근 */
-    MEMBER_REQUIRED(HttpStatus.UNAUTHORIZED, "E401", "로그인이 필요한 서비스입니다."),
+    MEMBER_REQUIRED(HttpStatus.UNAUTHORIZED, "E401", "로그인이 필요한 서비스입니다"),
+
+    /** 잘못된 메일 인증 코드 */
+    INVALID_MAIL_CODE_ERROR(HttpStatus.BAD_REQUEST, "E405", "잘못된 인증 코드 입니다"),
 
     /** 토큰이 유효하지 않을 때 or 로그아웃 된 토큰으로 인증 요청할 때 */
-    INVALID_TOKEN_VALUE_ERROR(HttpStatus.UNAUTHORIZED, "E411", "유효하지 않은 토큰 입니다."),
+    INVALID_TOKEN_VALUE_ERROR(HttpStatus.UNAUTHORIZED, "E411", "유효하지 않은 토큰 입니다"),
+
 
     /** Validation에서 오류 발생 시 */
     METHOD_ARGUMENT_NOT_VALID_ERROR(HttpStatus.BAD_REQUEST, "E510", "잘못된 값 입니다"),

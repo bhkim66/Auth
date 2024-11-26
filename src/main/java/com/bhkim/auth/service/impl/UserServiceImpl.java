@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> signUp(UserRequestDTO.Signup signup) {
-        User savedUser = userRepository.save(signup.toEntity());
+        User savedUser = userRepository.save(signup.toUserEntity());
 
         if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
@@ -42,13 +42,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UpdateMemberInfo updateMemberInfo) {
+    public ApiResponseResult<HttpStatus> updateUser(UserRequestDTO.UpdateMemberInfo updateMemberInfo) {
         //jwt로 멤버 조회가 필요함
         return null;
     }
 
     @Override
     public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword) {
+        return null;
+    }
+
+    @Override
+    public ApiResponseResult<HttpStatus> authenticateMail(String accessCode) {
         return null;
     }
 }

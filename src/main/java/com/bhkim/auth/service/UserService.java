@@ -11,6 +11,7 @@ public interface UserService {
     /**
      * 멤버 정보 조회
      * GET
+     *
      * @return 멤버 INFO 값
      */
     ApiResponseResult<UserRequestDTO.MemberInfo> getMemberInfo();
@@ -18,6 +19,7 @@ public interface UserService {
     /**
      * 회원가입
      * POST
+     *
      * @param signup 회원가입 필요한 정보
      * @return 성공 여부
      */
@@ -26,16 +28,28 @@ public interface UserService {
     /**
      * 유저 정보 변경
      * PUT
+     *
      * @param updateMemberInfo 유저 정보 변경 정보
      * @return 성공 여부
      */
-    ApiResponseResult<HttpStatus> setMember(UserRequestDTO.UpdateMemberInfo updateMemberInfo);
+    ApiResponseResult<HttpStatus> updateUser(UserRequestDTO.UpdateMemberInfo updateMemberInfo);
 
     /**
      * 비밀번호 변경
      * PUT
+     *
      * @param updatePassword 회원가입 필요한 정보
      * @return 성공 여부
      */
     ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword);
+
+
+    /**
+     * 회원가입 이메일 인증
+     * PUT
+     *
+     * @Param accessCode 회원가입 이메일 코드
+     * @return 성공 여부
+     */
+    ApiResponseResult<HttpStatus> authenticateMail(String accessCode);
 }

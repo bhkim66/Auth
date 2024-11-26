@@ -1,5 +1,6 @@
 package com.bhkim.auth.entity.jpa;
 
+import com.bhkim.auth.entity.jpa.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "ADDRESS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Address extends BaseTime {
+public class Address extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

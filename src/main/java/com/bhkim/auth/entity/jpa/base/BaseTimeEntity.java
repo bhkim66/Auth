@@ -1,4 +1,4 @@
-package com.bhkim.auth.entity.jpa;
+package com.bhkim.auth.entity.jpa.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseTime {
+public abstract class BaseTimeEntity {
 
     @CreatedDate
     @Column(name = "CREATED_DATE", nullable = false)

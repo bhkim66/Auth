@@ -1,23 +1,21 @@
 package com.bhkim.auth.entity.jpa;
 
 import com.bhkim.auth.common.TypeEnum;
+import com.bhkim.auth.entity.jpa.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
 
 @Getter
 @Entity
 @Table(name = "USERS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTime {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

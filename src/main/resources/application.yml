@@ -33,7 +33,7 @@ spring:
         ansi:
             enabled: ALWAYS
     redis:
-        host: localhost
+        host: "localhost"
         port: 6379
 server:
     port: 8080

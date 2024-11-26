@@ -10,12 +10,9 @@ import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.Rollback;
 
@@ -23,7 +20,7 @@ import java.util.UUID;
 
 import static com.bhkim.auth.common.TypeEnum.M;
 import static com.bhkim.auth.common.TypeEnum.PENDING;
-import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.DUPLICATION_VALUE_IN_DATABASE_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,13 +33,13 @@ class UserServiceTest {
     @Autowired
     UserServiceImpl userService;
 
-    @Mock
+    @Autowired
     UserRepository userRepository;
 
 
     @Test
     void 특정_멤버_조회() {
-        System.out.println("uuid : "+ UUID.randomUUID().toString());
+        System.out.println("uuid : " + UUID.randomUUID().toString());
     }
 
     @Test
@@ -83,13 +80,61 @@ class UserServiceTest {
                 .sex(signup.sex())
                 .phoneNumber(signup.phoneNumber())
                 .build();
-
+        User existUser = User.builder()
+                .id("bhkim62")
+                .password("test1234")
+                .name("박병호")
+                .age(35)
+                .sex(M)
+                .build();
+        userRepository.save(existUser);
         // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
-        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
+//        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
 
         // when
         // then
-        assertThatThrownBy(() -> userService.signUp(signupDTO)).isInstanceOf(ApiException.class).hasMessage("데이터 INSERT ERROR 발생");
+        assertThatThrownBy(() -> userService.signUp(signupDTO)).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void 회원가입_중복_ID_아닐경우() {
+        // given
+        String newId = "bhkim63";
+        User existUser = User.builder()
+                .id("bhkim62")
+                .password("test1234")
+                .name("박병호")
+                .age(35)
+                .sex(M)
+                .build();
+        userRepository.save(existUser);
+        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
+//        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
+
+        // when
+        ApiResponseResult<HttpStatus> result = userService.checkDuplicateId(newId);
+        // then
+        assertThat(result.isSuccess()).isTrue();
+    }
+
+    @Test
+    void 회원가입_중복_ID() {
+        // given
+        String newId = "bhkim62";
+        User existUser = User.builder()
+                .id("bhkim62")
+                .password("test1234")
+                .name("박병호")
+                .age(35)
+                .sex(M)
+                .build();
+        userRepository.save(existUser);
+        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
+//        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
+
+        // when
+        // then
+        assertThatThrownBy(() -> userService.checkDuplicateId(newId)).isInstanceOf(ApiException.class).hasMessage(DUPLICATION_VALUE_IN_DATABASE_ERROR.getErrorMessage());
     }
 
     @Test

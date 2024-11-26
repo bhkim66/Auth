@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     private Long seq;
 
     @NotBlank
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID", nullable = false, unique = true)
     private String id;
 
     @Column(name = "PASSWORD", nullable = false)

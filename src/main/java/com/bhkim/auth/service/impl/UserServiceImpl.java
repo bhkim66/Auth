@@ -13,7 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.DUPLICATION_VALUE_IN_DATABASE_ERROR;
 
 @Slf4j
 @Service
@@ -42,6 +45,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public ApiResponseResult<HttpStatus> checkDuplicateId(String id) {
+        boolean existUser = userRepository.existsById(id);
+        if(existUser) {
+            throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
+        }
+
+        return ApiResponseResult.success(HttpStatus.OK);
+    }
+
+    @Override
+    public ApiResponseResult<HttpStatus> authenticateMail(String accessCode) {
+        return null;
+    }
+
+    @Override
     public ApiResponseResult<HttpStatus> updateUser(UserRequestDTO.UpdateMemberInfo updateMemberInfo) {
         //jwt로 멤버 조회가 필요함
         return null;
@@ -52,8 +71,4 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
-    public ApiResponseResult<HttpStatus> authenticateMail(String accessCode) {
-        return null;
-    }
 }

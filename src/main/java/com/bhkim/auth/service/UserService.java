@@ -52,4 +52,6 @@ public interface UserService {
      * @return 성공 여부
      */
     ApiResponseResult<HttpStatus> authenticateMail(String accessCode);
+
+    ApiResponseResult<HttpStatus> checkDuplicateId(String id);
 }

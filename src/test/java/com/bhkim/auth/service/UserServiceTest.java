@@ -1,7 +1,7 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserRequestDTO;
+import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.record.SignUpRequest;

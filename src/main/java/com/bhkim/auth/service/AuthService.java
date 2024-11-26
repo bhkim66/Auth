@@ -2,7 +2,7 @@ package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.AuthDTO;
-import com.bhkim.auth.dto.UserRequestDTO;
+import com.bhkim.auth.dto.request.UserRequestDTO;
 import org.springframework.http.HttpStatus;
 
 /**

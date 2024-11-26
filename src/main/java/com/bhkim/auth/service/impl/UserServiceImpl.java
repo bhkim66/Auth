@@ -1,6 +1,6 @@
 package com.bhkim.auth.service.impl;
 
-import com.bhkim.auth.dto.UserRequestDTO;
+import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.entity.jpa.User;
@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
 import static com.bhkim.auth.exception.ExceptionEnum.DUPLICATION_VALUE_IN_DATABASE_ERROR;
@@ -40,7 +38,6 @@ public class UserServiceImpl implements UserService {
         if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
         }
-
         return ApiResponseResult.success(HttpStatus.OK);
     }
 
@@ -48,10 +45,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ApiResponseResult<HttpStatus> checkDuplicateId(String id) {
         boolean existUser = userRepository.existsById(id);
+
         if(existUser) {
             throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
         }
-
         return ApiResponseResult.success(HttpStatus.OK);
     }
 

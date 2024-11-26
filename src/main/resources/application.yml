@@ -35,6 +35,21 @@ spring:
     redis:
         host: "localhost"
         port: 6379
+    mail:
+        host: smtp.gmail.com
+        post: 587
+        username: "bhkim63@gmail.com"
+        password: "cgbatfcossaderjt"
+        properties:
+            mail:
+                smtp:
+                    connectiontimeout: 1000
+                    debug: true
+                    auth: true
+                    starttls:
+                        enable: true
+
+
 server:
     port: 8080
     servlet:
@@ -55,6 +70,12 @@ logging:
                     descriptor:
                         sql: trace
             springframework: info
+
+
+
+
+
+
 ---
 spring:
     config:

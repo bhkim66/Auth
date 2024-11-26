@@ -1,7 +1,7 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.UserRequestDTO;
+import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

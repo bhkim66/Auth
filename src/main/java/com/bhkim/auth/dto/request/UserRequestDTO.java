@@ -1,6 +1,5 @@
-package com.bhkim.auth.dto;
+package com.bhkim.auth.dto.request;
 
-import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.entity.jpa.User;
 import jakarta.validation.constraints.*;

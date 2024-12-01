@@ -12,7 +12,7 @@ import java.util.Optional;
 //@ComponentScan(basePackageClasses = )
 @SpringBootApplication(scanBasePackageClasses = {BasePackage.class})
 @ConfigurationPropertiesScan({"com.bhkim.auth.properties"})
-public class  AuthApplication {
+public class AuthApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthApplication.class, args);
 	}

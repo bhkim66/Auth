@@ -10,8 +10,4 @@ public class RequestMail {
     private String sendTo;
     private String templates; //사용할 templates 파일 이름
     private Map<String, String> context;// 내용
-
-    public void setTemplates(String templates) {
-        this.templates = templates;
-    }
 }

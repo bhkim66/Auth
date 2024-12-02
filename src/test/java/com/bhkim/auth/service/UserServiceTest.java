@@ -2,6 +2,7 @@ package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.record.SignUpRequest;
@@ -45,13 +46,31 @@ class UserServiceTest {
 
     @Test
     void 특정_멤버_조회() {
-        System.out.println("uuid : " + UUID.randomUUID().toString());
+        Long userSeq = 1L;
+        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
+        UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
+                .id(signup.id())
+                .password(signup.password())
+                .name(signup.name())
+                .age(signup.age())
+                .sex(signup.sex())
+                .phoneNumber(signup.phoneNumber())
+                .build();
+        User userEntity = signupDTO.toUserEntity();
+        em.persist(userEntity);
+        em.flush();
+        // when
+        ApiResponseResult<UserResponseDTO.UserInfo> memberInfo = userService.getMemberInfo(userSeq);
+
+        // then
+        // 반환된 결과가 성공 인지를 확인
+        assertThat(memberInfo.getData()).extracting("id").isEqualTo(signup.id());
     }
 
     @Test
-    @Rollback(false)
     void 회원가입() {
         //given
+        Long userSeq = 1L;
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
         UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
                 .id(signup.id())
@@ -68,10 +87,13 @@ class UserServiceTest {
 
         // when
         ApiResponseResult<HttpStatus> result = userService.signUp(signupDTO);
+        em.flush();
+        ApiResponseResult<UserResponseDTO.UserInfo> memberInfo = userService.getMemberInfo(userSeq);
 
         // then
         // 반환된 결과가 성공 인지를 확인
-        assertThat(true).isEqualTo(result.isSuccess());
+        assertThat(memberInfo.getData()).extracting("id").isEqualTo(signup.id());
+        assertThat(result.isSuccess()).isTrue();
     }
 
     @Test
@@ -248,5 +270,27 @@ class UserServiceTest {
         em.flush();
         //then
         assertThat(result.isSuccess()).isTrue();
+    }
+
+    @Test
+    void 멤버_비밀번호_이전과_동일_값_오류() {
+        //given
+        User existUser = User.builder()
+                .id("bhkim62")
+                .password("$2a$10$WW2wZvQZAhx1WknnRPXP2OgD6Dm8f3Pt8Mp22COI7.R.f2bSJO566")
+                .name("박병호")
+                .age(35)
+                .sex(M)
+                .build();
+//        userRepository.save(existUser);
+        em.persist(existUser);
+        em.flush();
+
+        Long userSeq = 1L;
+        UserRequestDTO.UpdatePassword requestUserInfo = UserRequestDTO.UpdatePassword.builder()
+                .password("test1234") // 비밀번호 암호화
+                .build();
+        //when
+        assertThatThrownBy(() -> userService.changePassword(requestUserInfo, userSeq)).isInstanceOf(ApiException.class).hasMessage("이전 비밀번호와 다른 비밀번호를 입력해주세요");
     }
 }

@@ -13,11 +13,14 @@ import org.springframework.http.HttpStatus;
 @ToString
 public enum ExceptionEnum {
     ILLEGAL_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "E400", "잘못된 인수값이 전달 됐습니다"),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E500", "예기치 못한 오류가 발생 했습니다"),
-    IO_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "E510", "잘못된 값 입니다"),
 
     /** 인증되지 않은 멤버 접근 */
     MEMBER_REQUIRED(HttpStatus.UNAUTHORIZED, "E401", "로그인이 필요한 서비스입니다"),
+
+    ILLEGAL_PASSWORD_ERROR(HttpStatus.BAD_REQUEST, "E411", "이전 비밀번호와 다른 비밀번호를 입력해주세요"),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E500", "예기치 못한 오류가 발생 했습니다"),
+    IO_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "E510", "잘못된 값 입니다"),
+
 
     /** 잘못된 메일 인증 코드 */
     INVALID_MAIL_CODE_ERROR(HttpStatus.BAD_REQUEST, "E405", "잘못된 인증 코드 입니다"),

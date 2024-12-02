@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class UserRequestDTO {
     }
 
     @Getter
+    @Setter
     @Builder
     public static class Signup {
         @NotBlank

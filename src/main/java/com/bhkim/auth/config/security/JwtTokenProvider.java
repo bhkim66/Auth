@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
+import static io.micrometer.common.util.StringUtils.isBlank;
+import static io.micrometer.common.util.StringUtils.isEmpty;
 
 @Slf4j
 @Component
@@ -169,17 +171,17 @@ public class JwtTokenProvider {
         return userId;
     }
 
-    public String getUserIdFromJWTToAop(String token) {
-        if(token == null) {
-            return "";
-        }
-        String userId = null;
-        Claims claims = parseClaims(token);
-        if(claims != null) {
-            userId = (String)claims.get("sub");
-        }
-        return userId;
-    }
+//    public String getUserIdFromJWTToAop(String token) {
+//        if(token == null) {
+//            return "";
+//        }
+//        String userId = null;
+//        Claims claims = parseClaims(token);
+//        if(claims != null) {
+//            userId = (String)claims.get("sub");
+//        }
+//        return userId;
+//    }
 
 
     public Long getUserSeqFromJWT(String token) {
@@ -261,25 +263,25 @@ public class JwtTokenProvider {
 //    }
 
     //토큰 암호화
-//    public TokenInfo encTokenInfo(TokenInfo tokenInfo) {
-//        if(!StringUtil.isEmpty(tokenInfo.getAccessToken()) && !StringUtil.isEmpty(tokenInfo.getRefreshToken())) {
+    public TokenInfo encTokenInfo(TokenInfo tokenInfo) {
+        if(!isBlank(tokenInfo.getAccessToken()) && !isBlank(tokenInfo.getRefreshToken())) {
 //            tokenInfo.setAccessToken(AESUtil.urlEncrypt(tokenInfo.getAccessToken()));
 //            tokenInfo.setRefreshToken(AESUtil.urlEncrypt(tokenInfo.getRefreshToken()));
-//        } else {
+        } else {
 //            throw new ApiException(TOKEN_HAS_NOT_VALUE_ERROR);
-//        }
-//        return tokenInfo;
-//    }
+        }
+        return tokenInfo;
+    }
 
-    //토큰 복호화
-//    public String decTokenStr(String token) {
-//        try {
-//            if (!StringUtil.isEmpty(token)) token = AESUtil.urlDecrypt(token);
-//        } catch (Exception e) {
-//            throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
-//        }
-//        return token;
-//    }
+//    토큰 복호화
+    public String decTokenStr(String token) {
+        try {
+//            if (!isBlank(token)) token = AESUtil.urlDecrypt(token);
+        } catch (Exception e) {
+            throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
+        }
+        return token;
+    }
 
 //    public TokenInfo getTokenInfo(String token) {
 //        if(token == null || !validateToken(token)) {

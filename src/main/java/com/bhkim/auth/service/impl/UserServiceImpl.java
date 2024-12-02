@@ -1,6 +1,7 @@
 package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.entity.jpa.User;
@@ -25,13 +26,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponseResult<UserRequestDTO.UserInfo> getMemberInfo(Long userSeq) {
-        return null;
+    public ApiResponseResult<UserResponseDTO.UserInfo> getMemberInfo(Long userSeq) {
+        User user = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
+        UserResponseDTO.UserInfo userResponseDto = user.toDto(user);
+
+        return ApiResponseResult.success(userResponseDto);
     }
 
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> signUp(UserRequestDTO.Signup signup) {
+        signup.setPassword(passwordEncoder.encode(signup.getPassword()));
         User savedUser = userRepository.save(signup.toUserEntity());
 
         if(savedUser.getSeq() < 0) {
@@ -39,8 +44,6 @@ public class UserServiceImpl implements UserService {
         }
         return ApiResponseResult.success(HttpStatus.OK);
     }
-
-
 
     @Override
     @Transactional
@@ -71,9 +74,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword, Long userSeq) {
+    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword rawPassword, Long userSeq) {
         User findUser = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
-        findUser.updatePassWord(updatePassword.getPassword());
+        // 이전 패스워드와 같은지 체크
+        if(passwordEncoder.matches(rawPassword.getPassword(), findUser.getPassword())) {
+            throw new ApiException(ILLEGAL_PASSWORD_ERROR);
+        }
+
+        String encodePassword = passwordEncoder.encode(rawPassword.getPassword());
+        findUser.updatePassWord(encodePassword);
         return ApiResponseResult.success(HttpStatus.OK);
     }
 

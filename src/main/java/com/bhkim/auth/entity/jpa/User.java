@@ -2,6 +2,7 @@ package com.bhkim.auth.entity.jpa;
 
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -92,4 +93,9 @@ public class User extends BaseEntity {
                 .build();
     }
 
+    public UserResponseDTO.UserInfo toDto(User user) {
+        return UserResponseDTO.UserInfo.builder()
+                .user(user)
+                .build();
+    }
 }

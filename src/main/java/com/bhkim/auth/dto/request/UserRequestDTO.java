@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.UUID;
 
@@ -18,10 +19,17 @@ public class UserRequestDTO {
 
     @Getter
     @Builder
-    public static class UserInfo {
+    public static class SignIn {
         @NotBlank
         @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$", message = "영문과 숫자를 혼합한 6~18자리를 입력해야 합니다")
         private String id;
+
+        @NotBlank(message = "비밀번호를 입력 해주세요")
+        private String password;
+
+        public UsernamePasswordAuthenticationToken toAuthentication() {
+            return new UsernamePasswordAuthenticationToken(id, password);
+        }
     }
 
     @Getter

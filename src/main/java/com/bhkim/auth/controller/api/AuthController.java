@@ -3,6 +3,7 @@ package com.bhkim.auth.controller.api;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.AuthDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,8 @@ public class AuthController {
 
 
     @PostMapping("/sign-in")
-    public ApiResponseResult<AuthDTO.Token> signIn(@RequestBody UserRequestDTO.Signup signup) {
-        ApiResponseResult<AuthDTO.Token> result = authService.signIn(signup);
+    public ApiResponseResult<UserResponseDTO.Token> signIn(@RequestBody UserRequestDTO.SignIn signup) {
+        ApiResponseResult<UserResponseDTO.Token> result = authService.signIn(signup);
         return result;
     }
 

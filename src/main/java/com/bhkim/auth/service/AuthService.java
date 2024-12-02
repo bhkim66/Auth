@@ -3,6 +3,7 @@ package com.bhkim.auth.service;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.AuthDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.UserResponseDTO;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -18,7 +19,7 @@ public interface AuthService {
      * @param signup id, pw 로그인 정보
      * @return TOKEN 값
      */
-    ApiResponseResult<AuthDTO.Token> signIn(UserRequestDTO.Signup signup);
+    ApiResponseResult<UserResponseDTO.Token> signIn(UserRequestDTO.SignIn signup);
 
     /**
      * 로그아웃
@@ -34,7 +35,7 @@ public interface AuthService {
      * POST
      * @return TOKEN 값
      */
-    ApiResponseResult<AuthDTO.Token> reissueToken();
+    ApiResponseResult<UserResponseDTO.Token> reissueToken();
 
     /**
      * 토큰 유효성 검사

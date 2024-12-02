@@ -4,11 +4,12 @@ package com.bhkim.auth.dto.response;
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.entity.jpa.User;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 public class UserResponseDTO {
 
-    @Getter
     public static class UserInfo {
         private String id;
         private String name;
@@ -24,5 +25,13 @@ public class UserResponseDTO {
             this.sex = user.getSex();
             this.phoneNumber = user.getPhoneNumber();
         }
+    }
+
+    @Builder
+    @ToString
+    public static class Token {
+        private String accessToken;
+        private String refreshToken;
+        private LocalDateTime publishTime;
     }
 }

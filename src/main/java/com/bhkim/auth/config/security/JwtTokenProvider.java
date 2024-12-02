@@ -3,6 +3,7 @@ package com.bhkim.auth.config.security;
 import com.bhkim.auth.entity.TokenInfo;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
+import com.bhkim.auth.util.AESUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +21,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.*;
+import static com.bhkim.auth.util.AESUtil.*;
 import static io.micrometer.common.util.StringUtils.isBlank;
 import static io.micrometer.common.util.StringUtils.isEmpty;
 
@@ -35,10 +37,6 @@ public class JwtTokenProvider {
     private static final long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
 
     private final Key key;
-//    PropertiesValue properties
-
-//    @Autowired
-//    RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     public JwtTokenProvider() {
@@ -81,7 +79,7 @@ public class JwtTokenProvider {
         return TokenInfo.builder()
                 .userId(userInfo.getId())
                 .userSeq(userInfo.getSeq())
-                .AuthorityList(typeList)
+                .authorityList(typeList)
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -210,73 +208,21 @@ public class JwtTokenProvider {
         response.setHeader("refreshToken", "bearer "+ refreshToken);
     }
 
-//    public void insertMemberRedis(TokenInfo tokenInfo) {
-//        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
-//        Date rtkExpiredDate = new Date((new Date()).getTime() + tokenInfo.getRtkExpirationTime());
-//        String userKey = ConstDef.connectChannel + ConstDef.REDIS_KEY_PREFIX + tokenInfo.getUserId();
-//
-//        hashOperations.put(userKey, "memSeq", String.valueOf(tokenInfo.getMemSeq()));
-//        hashOperations.put(userKey, "userId", tokenInfo.getUserId());
-//        hashOperations.put(userKey, "accessToken", tokenInfo.getAccessToken());
-//        hashOperations.put(userKey, "refreshToken", tokenInfo.getRefreshToken());
-//        hashOperations.put(userKey, "rtkExpirationTime", String.valueOf((tokenInfo.getRtkExpirationTime() / 1000)) );
-//        hashOperations.put(userKey, "rtkExpirationDate", rtkExpiredDate.toString());
-//        redisTemplate.expire(userKey , tokenInfo.getRtkExpirationTime(), MILLISECONDS);
-//    }
-//
-//    public void deleteMemberRedis(String token) {
-//        String userId = getUserIdFromJWT(token);
-//        String userKey = ConstDef.connectChannel + ConstDef.REDIS_KEY_PREFIX + userId;
-//
-//        if(existMemberInRedis(userId, token)) {
-//            SecurityContextHolder.clearContext();
-//            throw new ApiException(REDIS_USER_NOT_EXIST);
-//        }
-//        redisTemplate.delete(userKey);
-//        redisTemplate.opsForValue().set(token, "SIGH-OUT");
-//        redisTemplate.expire(token, ACCESS_TOKEN_SIGN_OUT_TIME, MILLISECONDS);
-//    }
-
-//    public void deleteHomeMemberRedis(String token, String userKey) {
-//        String decToken = decTokenStr(token);
-//        String userId = getUserIdFromJWT(decToken);
-//
-//        if(existMemberInRedis(userId, decToken)) {
-//            SecurityContextHolder.clearContext();
-//            throw new ApiException(REDIS_USER_NOT_EXIST);
-//        }
-//        redisTemplate.delete(userKey);
-//        redisTemplate.opsForValue().set(decToken, "SIGH-OUT");
-//        redisTemplate.expire(decToken, ACCESS_TOKEN_SIGN_OUT_TIME, MILLISECONDS);
-//    }
-
-//    public boolean existMemberInRedis(String userId, String atk) {
-//        String userKey = ConstDef.connectChannel + ConstDef.REDIS_KEY_PREFIX + userId;
-//        String loginUser = (String) redisTemplate.opsForHash().get(userKey, "userId" );
-//        String loginAtk = (String) redisTemplate.opsForHash().get(userKey, "accessToken");
-//        //유저는 존재하나 atk값이 다를 경우(중복로그인)
-//        if (userId.equals(loginUser) && !atk.equals(loginAtk)) {
-//            return true;
-//        }
-//        //유저 없음
-//        return false;
-//    }
 
     //토큰 암호화
-    public TokenInfo encTokenInfo(TokenInfo tokenInfo) {
-        if(!isBlank(tokenInfo.getAccessToken()) && !isBlank(tokenInfo.getRefreshToken())) {
-//            tokenInfo.setAccessToken(AESUtil.urlEncrypt(tokenInfo.getAccessToken()));
-//            tokenInfo.setRefreshToken(AESUtil.urlEncrypt(tokenInfo.getRefreshToken()));
+    public TokenInfo encToken(TokenInfo tokenInfo) {
+        if(isBlank(tokenInfo.getAccessToken()) || isBlank(tokenInfo.getRefreshToken())) {
+            throw new ApiException(ILLEGAL_TOKEN_VALUE);
         } else {
-//            throw new ApiException(TOKEN_HAS_NOT_VALUE_ERROR);
+            tokenInfo.encToken(urlEncrypt(tokenInfo.getAccessToken()), urlEncrypt(tokenInfo.getRefreshToken()));
         }
         return tokenInfo;
     }
 
-//    토큰 복호화
+    // 토큰 복호화
     public String decTokenStr(String token) {
         try {
-//            if (!isBlank(token)) token = AESUtil.urlDecrypt(token);
+            if (!isBlank(token)) token = urlDecrypt(token);
         } catch (Exception e) {
             throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
         }

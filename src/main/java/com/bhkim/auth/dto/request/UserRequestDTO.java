@@ -5,6 +5,7 @@ import com.bhkim.auth.entity.jpa.User;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.UUID;
 
@@ -14,13 +15,15 @@ import static com.bhkim.auth.common.TypeEnum.*;
 @Data
 public class UserRequestDTO {
 
+    @Getter
     @Builder
-    public static class MemberInfo {
+    public static class UserInfo {
         @NotBlank
         @Pattern(regexp = "^[a-z]+[a-z0-9]{5,19}$", message = "영문과 숫자를 혼합한 6~18자리를 입력해야 합니다")
         private String id;
     }
 
+    @Getter
     @Builder
     public static class Signup {
         @NotBlank
@@ -28,7 +31,6 @@ public class UserRequestDTO {
         private String id;
 
         @NotBlank(message = "비밀번호를 입력 해주세요")
-        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,12}$", message = "영문과 숫자를 혼합한 8~12자리를 입력해야 합니다")
         private String password;
 
         @NotBlank
@@ -59,8 +61,9 @@ public class UserRequestDTO {
         }
     }
 
+    @Getter
     @Builder
-    public static class UpdateMemberInfo {
+    public static class UpdateUserInfo {
         @NotBlank
         @Pattern(regexp = "^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]*$", message = "이름은 영문 한글로 이뤄져야 합니다")
         private String name;
@@ -75,9 +78,11 @@ public class UserRequestDTO {
         private String phoneNumber;
     }
 
+    @Getter
     @Builder
     public static class UpdatePassword {
         @NotBlank(message = "비밀번호를 입력 해주세요")
+//        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,12}$", message = "영문과 숫자를 혼합한 8~12자리를 입력해야 합니다")
         private String password;
     }
 

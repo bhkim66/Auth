@@ -8,6 +8,7 @@ import com.bhkim.auth.record.SignUpRequest;
 import com.bhkim.auth.record.UpdateUser;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.UserServiceImpl;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ import static org.mockito.BDDMockito.given;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class UserServiceTest {
 
     @Autowired
@@ -35,6 +38,9 @@ class UserServiceTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    EntityManager em;
 
 
     @Test
@@ -140,6 +146,7 @@ class UserServiceTest {
     @Test
     void 회원가입_인증메일_인증_성공() {
         // given
+        Long userSeq = 1L;
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
         User user = User.builder()
                 .id(signup.id())
@@ -155,7 +162,7 @@ class UserServiceTest {
         given(userRepository.save(any())).willReturn(user);
 
         // when
-        ApiResponseResult<HttpStatus> result = userService.authenticateMail("1234asdf-basdfwqwer-asdf325w1b");
+        ApiResponseResult<HttpStatus> result = userService.authenticateMail("1234asdf-basdfwqwer-asdf325w1b", userSeq);
         // then
         assertThat(result.isSuccess()).isTrue();
 
@@ -165,6 +172,7 @@ class UserServiceTest {
     @Test
     void 회원가입_인증메일_인증_실패() {
         // given
+        Long userSeq = 1L;
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
         User user = User.builder()
                 .id(signup.id())
@@ -181,14 +189,26 @@ class UserServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> userService.authenticateMail("1234asdf-basdfwqwer-wrongcode")).isInstanceOf(ApiException.class).hasMessage("잘못된 인증 코드 입니다");
+        assertThatThrownBy(() -> userService.authenticateMail("1234asdf-basdfwqwer-wrongcode", userSeq)).isInstanceOf(ApiException.class).hasMessage("잘못된 인증 코드 입니다");
     }
 
     @Test
     void 멤버_정보_수정_성공() {
         //given
+        User existUser = User.builder()
+                .id("bhkim62")
+                .password("test1234")
+                .name("박병호")
+                .age(35)
+                .sex(M)
+                .build();
+//        userRepository.save(existUser);
+        em.persist(existUser);
+        em.flush();
+
+        Long userSeq = 1L;
         UpdateUser updateUser = new UpdateUser("김병호", 30, M, "01029292020");
-        UserRequestDTO.UpdateMemberInfo updateMemberInfo = UserRequestDTO.UpdateMemberInfo.builder()
+        UserRequestDTO.UpdateUserInfo updateUserInfo = UserRequestDTO.UpdateUserInfo.builder()
                 .name(updateUser.name())
                 .age(updateUser.age())
                 .sex(updateUser.sex())
@@ -196,29 +216,37 @@ class UserServiceTest {
                 .build();
 
         //when
-        ApiResponseResult<HttpStatus> result = userService.updateUser(updateMemberInfo);
+        ApiResponseResult<HttpStatus> result = userService.updateUser(updateUserInfo, userSeq);
 
+        em.flush();
         //then
         assertThat(result.isSuccess()).isTrue();
     }
 
     @Test
-    void 멤버_정보_수정_실패() {
+    void 멤버_비밀번호_수정_성공() {
         //given
-        UpdateUser updateUser = new UpdateUser("김병호", 30, M, "01029292020");
-        UserRequestDTO.UpdateMemberInfo updateMemberInfo = UserRequestDTO.UpdateMemberInfo.builder()
-                .name(updateUser.name())
-                .age(updateUser.age())
-                .sex(updateUser.sex())
-                .phoneNumber(updateUser.phoneNumber())
+        User existUser = User.builder()
+                .id("bhkim62")
+                .password("test1234")
+                .name("박병호")
+                .age(35)
+                .sex(M)
+                .build();
+//        userRepository.save(existUser);
+        em.persist(existUser);
+        em.flush();
+
+        Long userSeq = 1L;
+        UserRequestDTO.UpdatePassword requestUserInfo = UserRequestDTO.UpdatePassword.builder()
+                .password("qwer1234") // 비밀번호 암호화
                 .build();
 
         //when
+        ApiResponseResult<HttpStatus> result = userService.changePassword(requestUserInfo, userSeq);
 
+        em.flush();
         //then
-//        assertThatThrownBy(() -> memberService.updateUser(updateMemberInfo)).
-
+        assertThat(result.isSuccess()).isTrue();
     }
-
-
 }

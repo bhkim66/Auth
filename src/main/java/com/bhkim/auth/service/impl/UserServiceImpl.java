@@ -13,8 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.bhkim.auth.exception.ExceptionEnum.DATABASE_INSERT_ERROR;
-import static com.bhkim.auth.exception.ExceptionEnum.DUPLICATION_VALUE_IN_DATABASE_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.*;
 
 @Slf4j
 @Service
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponseResult<UserRequestDTO.MemberInfo> getMemberInfo() {
+    public ApiResponseResult<UserRequestDTO.UserInfo> getMemberInfo(Long userSeq) {
         return null;
     }
 
@@ -41,6 +40,8 @@ public class UserServiceImpl implements UserService {
         return ApiResponseResult.success(HttpStatus.OK);
     }
 
+
+
     @Override
     @Transactional
     public ApiResponseResult<HttpStatus> checkDuplicateId(String id) {
@@ -53,19 +54,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponseResult<HttpStatus> authenticateMail(String accessCode) {
+    public ApiResponseResult<HttpStatus> authenticateMail(String accessCode, Long userSeq) {
         return null;
     }
 
     @Override
-    public ApiResponseResult<HttpStatus> updateUser(UserRequestDTO.UpdateMemberInfo updateMemberInfo) {
+    @Transactional
+    public ApiResponseResult<HttpStatus> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo, Long userSeq) {
         //jwt로 멤버 조회가 필요함
-        return null;
+        User findUser = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
+        User updateUser = findUser.toEntity(updateUserInfo);
+
+        findUser.update(updateUser);
+        return ApiResponseResult.success(HttpStatus.OK);
     }
 
     @Override
-    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword) {
-        return null;
+    @Transactional
+    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword updatePassword, Long userSeq) {
+        User findUser = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
+        findUser.updatePassWord(updatePassword.getPassword());
+        return ApiResponseResult.success(HttpStatus.OK);
     }
 
 }

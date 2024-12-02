@@ -1,6 +1,7 @@
 package com.bhkim.auth.entity.jpa;
 
 import com.bhkim.auth.common.TypeEnum;
+import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.entity.jpa.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -52,7 +53,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<AuthHistory> authHistoryList;
 
-//    @OneToMany(mappedBy = "user")
+    //    @OneToMany(mappedBy = "user")
 //    private List<GrantedAuthority> roles;
     @Column(name = "ROLE")
     private String role;
@@ -70,10 +71,25 @@ public class User extends BaseEntity {
         this.id = id;
         this.seq = seq;
     }
-//    public void setMember(MemberDto.MemberInfo mi) {
-//        this.name = mi.getName();
-//        this.age = mi.getAge();
-//        this.sex = mi.getSex();
-//        this.phoneNumber = mi.getPhoneNumber();
-//    }
+
+    public void update(User user) {
+        this.name = user.getName();
+        this.age = user.getAge();
+        this.sex = user.getSex();
+        this.phoneNumber = user.getPhoneNumber();
+    }
+
+    public void updatePassWord(String password) {
+        this.password = password;
+    }
+
+    public User toEntity(UserRequestDTO.UpdateUserInfo umi) {
+        return User.builder()
+                .name(umi.getName())
+                .sex(umi.getSex())
+                .age(umi.getAge())
+                .phoneNumber(umi.getPhoneNumber())
+                .build();
+    }
+
 }

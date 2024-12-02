@@ -180,11 +180,11 @@ class UserServiceTest {
                 .accessCode("1234asdf-basdfwqwer-asdf325w1b")
                 .build();
 
-        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
-        given(userRepository.save(any())).willReturn(user);
-
+        em.persist(user);
+        em.flush();
         // when
         ApiResponseResult<HttpStatus> result = userService.authenticateMail("1234asdf-basdfwqwer-asdf325w1b", userSeq);
+
         // then
         assertThat(result.isSuccess()).isTrue();
 

@@ -57,7 +57,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ApiResponseResult<HttpStatus> authenticateMail(String accessCode, Long userSeq) {
+
         return null;
     }
 

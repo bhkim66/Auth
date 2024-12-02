@@ -48,9 +48,6 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private TypeEnum status;
 
-    @Column(name = "ACCESS_CODE")
-    private String accessCode;
-
     @OneToMany(mappedBy = "user")
     private List<AuthHistory> authHistoryList;
 
@@ -60,9 +57,8 @@ public class User extends BaseEntity {
     private String role;
 
     @Builder
-    public User(String role, String accessCode, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id, Long seq) {
+    public User(String role, String accessCode, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id) {
         this.role = role;
-        this.accessCode = accessCode;
         this.status = status;
         this.phoneNumber = phoneNumber;
         this.sex = sex;
@@ -70,7 +66,6 @@ public class User extends BaseEntity {
         this.name = name;
         this.password = password;
         this.id = id;
-        this.seq = seq;
     }
 
     public void update(User user) {

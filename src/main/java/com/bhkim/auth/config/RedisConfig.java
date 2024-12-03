@@ -57,10 +57,6 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    @Bean
-    public HashOperations<String, String, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForHash();
-    }
 }
 
 

@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,11 +20,7 @@ import java.security.Key;
 import java.util.*;
 
 import static com.bhkim.auth.common.ConstDef.*;
-import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_TOKEN_VALUE;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
-import static com.bhkim.auth.util.AESUtil.urlDecrypt;
-import static com.bhkim.auth.util.AESUtil.urlEncrypt;
-import static io.micrometer.common.util.StringUtils.isBlank;
 
 @Slf4j
 @Component
@@ -35,27 +30,15 @@ public class JwtTokenProvider {
     private final JwtHandler jwtHandler;
     private final RedisHandler redisHandler;
 
-//         return TokenInfo.builder()
-//                 .userId(userInfo.getId())
-//            .userSeq(userInfo.getSeq())
-//            .authorityList(typeList)
-//                    .grantType(BEARER_TYPE)
-//                    .accessToken(accessToken)
-//                    .refreshToken(refreshToken)
-//                    .rtkExpirationTime(REDIS_EXPIRE_TIME)
-//                    .build();
-
     public String generateToken(PrivateClaims privateClaims) {
         return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getMemberId(), ROLE_TYPES, privateClaims.getRoleTypes()), ACCESS_TOKEN_EXPIRE_TIME, key);
     }
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
     public Optional<PrivateClaims> parseRefreshToken(String refreshToken, String id) {
-        String redisRefreshToken = redisHandler.getObjectData(id, refreshToken);
+        String redisRefreshToken = redisHandler.getHashData(id, refreshToken);
         return jwtHandler.checkRefreshToken(refreshToken, redisRefreshToken, key.getAlgorithm()).map(claims -> convert(claims));
     }
-
-
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String token) {
@@ -131,26 +114,6 @@ public class JwtTokenProvider {
 //    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
 //        response.setHeader("refreshToken", "bearer "+ refreshToken);
 //    }
-
-
-    //토큰 암호화
-    public String encToken(String token) {
-        if(isBlank(token) || isBlank(token)) {
-            throw new ApiException(ILLEGAL_TOKEN_VALUE);
-        } else {
-            return urlEncrypt(token);
-        }
-    }
-
-    // 토큰 복호화
-    public String decTokenStr(String token) {
-        try {
-            if (!isBlank(token)) token = urlDecrypt(token);
-        } catch (Exception e) {
-            throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
-        }
-        return token;
-    }
 
     private PrivateClaims convert(Claims claims) {
         return new PrivateClaims(claims.get(USER_ID, String.class), claims.get(ROLE_TYPES, UserRole.class));

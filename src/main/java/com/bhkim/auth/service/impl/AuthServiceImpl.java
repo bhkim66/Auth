@@ -2,6 +2,7 @@ package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.config.security.JwtTokenProvider;
+import com.bhkim.auth.dto.RedisDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
@@ -19,9 +20,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
+import static com.bhkim.auth.common.ConstDef.ACCESS_TOKEN_EXPIRE_TIME_LOCAL;
 import static com.bhkim.auth.exception.ExceptionEnum.BAD_CREDENTIALS_EXCEPTION;
 import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_ARGUMENT_ERROR;
+import static com.bhkim.auth.util.AESUtil.urlDecrypt;
+import static com.bhkim.auth.util.AESUtil.urlEncrypt;
 
 @Slf4j
 @Service
@@ -50,16 +55,14 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()));
         String refreshToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()));
-//        redisUtil.insertMemberRedis(tokenInfo);
-//          레디스에 값 넣기
-        //토큰 암호화
-        accessToken = jwtTokenProvider.encToken(accessToken);
-        refreshToken = jwtTokenProvider.encToken(refreshToken);
+
+        // 레디스에 token 값 넣기
+        redisHandler.setHashData(user.getId(), getTokenSaveInRedisToMap(user.getId(), refreshToken), ACCESS_TOKEN_EXPIRE_TIME_LOCAL);
 
         return ApiResponseResult.success(UserResponseDTO.Token
                 .builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(urlEncrypt(accessToken)) // 토큰 암호화
+                .refreshToken(urlEncrypt(refreshToken))
                 .publishTime(LocalDateTime.now())
                 .build());
     }
@@ -78,4 +81,12 @@ public class AuthServiceImpl implements AuthService {
     public ApiResponseResult<UserRequestDTO.Signup> validationToken() {
         return null;
     }
+
+    private static Map<String, Object> getTokenSaveInRedisToMap(String userId, String refreshToken) {
+        return RedisDTO.Token.builder()
+                .userId(userId)
+                .refreshToken(refreshToken)
+                .expiredDateTime(LocalDateTime.now().plusSeconds(ACCESS_TOKEN_EXPIRE_TIME_LOCAL).toString()).build().convertMap();
+    }
+
 }

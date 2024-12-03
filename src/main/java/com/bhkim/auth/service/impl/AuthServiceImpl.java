@@ -2,15 +2,13 @@ package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.config.security.JwtTokenProvider;
-import com.bhkim.auth.dto.AuthDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
-import com.bhkim.auth.entity.TokenInfo;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.AuthService;
-import com.bhkim.auth.util.RedisUtil;
+import com.bhkim.auth.handler.RedisHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisUtil redisUtil;
+    private final RedisHandler redisHandler;
 
     @Override
     public ApiResponseResult<UserResponseDTO.Token> signIn(UserRequestDTO.SignIn signIn) {
@@ -50,16 +48,18 @@ public class AuthServiceImpl implements AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         User user = userRepository.findById(signIn.getId()).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(user);
+        String accessToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()));
+        String refreshToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()));
 //        redisUtil.insertMemberRedis(tokenInfo);
-
+//          레디스에 값 넣기
         //토큰 암호화
-        tokenInfo = jwtTokenProvider.encToken(tokenInfo);
+        accessToken = jwtTokenProvider.encToken(accessToken);
+        refreshToken = jwtTokenProvider.encToken(refreshToken);
 
         return ApiResponseResult.success(UserResponseDTO.Token
                 .builder()
-                .accessToken(tokenInfo.getAccessToken())
-                .refreshToken(tokenInfo.getRefreshToken())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .publishTime(LocalDateTime.now())
                 .build());
     }

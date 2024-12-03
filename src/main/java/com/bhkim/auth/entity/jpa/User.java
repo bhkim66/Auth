@@ -1,6 +1,7 @@
 package com.bhkim.auth.entity.jpa;
 
 import com.bhkim.auth.common.TypeEnum;
+import com.bhkim.auth.common.UserRole;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.base.BaseEntity;
@@ -54,10 +55,10 @@ public class User extends BaseEntity {
     //    @OneToMany(mappedBy = "user")
 //    private List<GrantedAuthority> roles;
     @Column(name = "ROLE")
-    private String role;
+    private UserRole role;
 
     @Builder
-    public User(String role, String accessCode, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id) {
+    public User(UserRole role, String accessCode, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id) {
         this.role = role;
         this.status = status;
         this.phoneNumber = phoneNumber;

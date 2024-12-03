@@ -1,22 +1,24 @@
-package com.bhkim.auth.util;
+package com.bhkim.auth.handler;
 
 import com.bhkim.auth.entity.TokenInfo;
+import com.bhkim.auth.entity.jpa.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static com.bhkim.auth.common.ConstDef.REDIS_KEY_PREFIX;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 @Component
 @RequiredArgsConstructor
-public class RedisUtil {
+public class RedisHandler {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void insertMemberRedis(TokenInfo tokenInfo) {
+    public void insertUser(TokenInfo tokenInfo) {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
         Date rtkExpiredDate = new Date((new Date()).getTime() + tokenInfo.getRtkExpirationTime());
 
@@ -32,28 +34,19 @@ public class RedisUtil {
         redisTemplate.expire(userKey , tokenInfo.getRtkExpirationTime(), MILLISECONDS);
     }
 
-//    public void deleteMemberRedis(String token) {
-//        String userId = getUserIdFromJWT(token);
-//        String userKey = ConstDef.connectChannel + ConstDef.REDIS_KEY_PREFIX + userId;
-//
-//        if(existMemberInRedis(userId, token)) {
-//            SecurityContextHolder.clearContext();
-//            throw new ApiException(REDIS_USER_NOT_EXIST);
-//        }
-//        redisTemplate.delete(userKey);
-//        redisTemplate.opsForValue().set(token, "SIGH-OUT");
-//        redisTemplate.expire(token, ACCESS_TOKEN_SIGN_OUT_TIME, MILLISECONDS);
-//    }
+    public void setData(String key, String value,Long expiredTime){
+        redisTemplate.opsForValue().set(key, value, expiredTime, MILLISECONDS);
+    }
 
-        //    public boolean existMemberInRedis(String userId, String atk) {
-//        String userKey = ConstDef.connectChannel + ConstDef.REDIS_KEY_PREFIX + userId;
-//        String loginUser = (String) redisTemplate.opsForHash().get(userKey, "userId" );
-//        String loginAtk = (String) redisTemplate.opsForHash().get(userKey, "accessToken");
-//        //유저는 존재하나 atk값이 다를 경우(중복로그인)
-//        if (userId.equals(loginUser) && !atk.equals(loginAtk)) {
-//            return true;
-//        }
-//        //유저 없음
-//        return false;
-//    }
+    public String getData(String key){
+        return (String) redisTemplate.opsForValue().get(key);
+    }
+
+    public String getObjectData(String id, String key){
+        return (String) redisTemplate.opsForHash().get(id, key);
+    }
+
+    public void deleteData(String key){
+        redisTemplate.delete(key);
+    }
 }

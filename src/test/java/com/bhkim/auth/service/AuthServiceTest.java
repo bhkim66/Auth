@@ -1,6 +1,7 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
+import com.bhkim.auth.common.UserRole;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
@@ -20,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.bhkim.auth.common.TypeEnum.M;
+import static com.bhkim.auth.common.UserRole.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,6 +64,7 @@ class AuthServiceTest {
                 .id("bhkim62")
                 .password(passwordEncoder.encode("test1234"))
                 .name("박병호")
+                .role(USER)
                 .age(35)
                 .sex(M)
                 .build();

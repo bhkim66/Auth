@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         User findUser = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         // 이전 패스워드와 같은지 체크
         if(passwordEncoder.matches(rawPassword.getPassword(), findUser.getPassword())) {
-            throw new ApiException(ILLEGAL_PASSWORD_ERROR);
+            throw new ApiException(ILLEGAL_PASSWORD);
         }
 
         String encodePassword = passwordEncoder.encode(rawPassword.getPassword());

@@ -32,18 +32,4 @@ public class TokenInfo {
         this.rtkExpirationTime = rtkExpirationTime;
         this.rtkExpirationDate = rtkExpirationDate;
     }
-
-    public TokenInfo encToken(String encAccessToken, String encRefreshToken) {
-        encAccessToken(encAccessToken);
-        encRefreshToken(encRefreshToken);
-        return this;
-    }
-
-    private void encAccessToken(String encAccessToken) {
-        this.accessToken = encAccessToken;
-    }
-
-    private void encRefreshToken(String encRefreshToken) {
-        this.refreshToken = encRefreshToken;
-    }
 }

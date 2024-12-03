@@ -1,12 +1,14 @@
 package com.bhkim.auth.config.security;
 
-import com.bhkim.auth.entity.TokenInfo;
-import com.bhkim.auth.entity.jpa.User;
+import com.bhkim.auth.common.UserRole;
 import com.bhkim.auth.exception.ApiException;
-import com.bhkim.auth.util.AESUtil;
+import com.bhkim.auth.handler.JwtHandler;
+import com.bhkim.auth.handler.RedisHandler;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,76 +18,52 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static com.bhkim.auth.exception.ExceptionEnum.*;
-import static com.bhkim.auth.util.AESUtil.*;
+import static com.bhkim.auth.common.ConstDef.*;
+import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_TOKEN_VALUE;
+import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
+import static com.bhkim.auth.util.AESUtil.urlDecrypt;
+import static com.bhkim.auth.util.AESUtil.urlEncrypt;
 import static io.micrometer.common.util.StringUtils.isBlank;
-import static io.micrometer.common.util.StringUtils.isEmpty;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
+    private static final Long ACCESS_TOKEN_EXPIRE_TIME =  30 * 60 * 1000L;             // 30분
+    private static final Long ACCESS_TOKEN_EXPIRE_TIME_LOCAL = 12 * 60 * 60 * 1000L;    // 12시간
+    private static final Long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
 
-    private static final String MEMBER_SEQ = "seq";
-    private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME =  30 * 60 * 1000L;             // 30분
-    private static final long ACCESS_TOKEN_EXPIRE_TIME_LOCAL = 12 * 60 * 60 * 1000L;    // 12시간
-    private static final long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
+    private final Key key = Keys.secretKeyFor(KEY_USE_ALGORITHM);
+    private final JwtHandler jwtHandler;
+    private final RedisHandler redisHandler;
 
-    private final Key key;
+//         return TokenInfo.builder()
+//                 .userId(userInfo.getId())
+//            .userSeq(userInfo.getSeq())
+//            .authorityList(typeList)
+//                    .grantType(BEARER_TYPE)
+//                    .accessToken(accessToken)
+//                    .refreshToken(refreshToken)
+//                    .rtkExpirationTime(REDIS_EXPIRE_TIME)
+//                    .build();
 
-    @Autowired
-    public JwtTokenProvider() {
-//        byte[] keyBytes = Decoders.BASE64.decode(key);
-//        this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    public String generateToken(PrivateClaims privateClaims) {
+        System.out.println("privateClaims.getMemberId() = " + privateClaims.getMemberId());
+        System.out.println("USER_ID = " + USER_ID);
+        System.out.println("privateClaims.getRoleTypes() = " + privateClaims.getRoleTypes());
+        System.out.println("key = " + key);
+        return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getMemberId(), ROLE_TYPES, privateClaims.getRoleTypes()), ACCESS_TOKEN_EXPIRE_TIME, key);
     }
 
-    // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public TokenInfo generateToken(User userInfo) {
-        // Access Token 생성
-        List<String> typeList = new ArrayList<>();
-
-        Date accessTokenExpiresIn = null;
-//        if("local".equals(profile) ) {
-            accessTokenExpiresIn = new Date((new Date()).getTime() + ACCESS_TOKEN_EXPIRE_TIME_LOCAL);
-//        } else {
-//            accessTokenExpiresIn = new Date((new Date()).getTime() + ACCESS_TOKEN_EXPIRE_TIME);
-//        }
-
-        String accessToken = Jwts.builder()
-                .setHeaderParam("typ", "JWT") // 토큰 Header 설정 type = JWT 기본값
-                .setSubject(userInfo.getId()) // 발급 받는 주체 구분 값
-                .setIssuer("auth.bhkim.com") // 토큰 발급자
-                .claim(MEMBER_SEQ , userInfo.getSeq()) // payload 값
-                .setExpiration(accessTokenExpiresIn) // 만료 시간
-                .signWith(key, SignatureAlgorithm.HS256) // 사용 암호 알고리즘
-                .compact();
-        // Refresh Token 생성
-        Date refreshTokenExpiresIn = new Date((new Date()).getTime() + REDIS_EXPIRE_TIME);
-
-        String refreshToken = Jwts.builder()
-                .setHeaderParam("typ", "JWT")
-                .setSubject(userInfo.getId())
-                .setIssuer("auth.bhkim.com")
-                .setExpiration(refreshTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        return TokenInfo.builder()
-                .userId(userInfo.getId())
-                .userSeq(userInfo.getSeq())
-                .authorityList(typeList)
-                .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .rtkExpirationTime(REDIS_EXPIRE_TIME)
-                .build();
+    //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
+    public Optional<PrivateClaims> parseRefreshToken(String refreshToken, String id) {
+        String redisRefreshToken = redisHandler.getObjectData(id, refreshToken);
+        return jwtHandler.checkRefreshToken(refreshToken, redisRefreshToken, key.getAlgorithm()).map(claims -> convert(claims));
     }
+
+
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String token) {
@@ -148,75 +126,28 @@ public class JwtTokenProvider {
         return (expiration.getTime() - now);
     }
 
-    public String getUserIdFromGlobalJWT(String token) {
-        String userId = null;
-        Claims claims = parseClaims(token);
-        if(claims != null) {
-            userId = (String)claims.get("sub");
-        }
-        return userId;
-    }
-
-    public String getUserIdFromJWT(String token) {
-        if(token == null || !validateToken(token)) {
-            return "";
-        }
-        String userId = null;
-        Claims claims = parseClaims(token);
-        if(claims != null) {
-            userId = (String)claims.get("sub");
-        }
-        return userId;
-    }
-
-//    public String getUserIdFromJWTToAop(String token) {
-//        if(token == null) {
-//            return "";
-//        }
-//        String userId = null;
-//        Claims claims = parseClaims(token);
-//        if(claims != null) {
-//            userId = (String)claims.get("sub");
-//        }
-//        return userId;
-//    }
-
-
-    public Long getUserSeqFromJWT(String token) {
-        if(token == null || !validateToken(token)) {
-            return 0L;
-        }
-        Long memSeq = 0L;
-        Claims claims = parseClaims(token);
-        if(claims != null) {
-            memSeq =  ((Number) claims.get(MEMBER_SEQ)).longValue() ;
-        }
-        return memSeq;
-    }
-
     public boolean matchRefreshToken(String refreshToken, String storedRefreshToken) {
         return storedRefreshToken.equals(refreshToken);
     }
 
-    // 어세스 토큰 헤더 설정
-    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-        response.setHeader("authorization", "bearer "+ accessToken);
-    }
-
-    // 리프레시 토큰 헤더 설정
-    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-        response.setHeader("refreshToken", "bearer "+ refreshToken);
-    }
+//    // 어세스 토큰 헤더 설정
+//    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
+//        response.setHeader("authorization", "bearer "+ accessToken);
+//    }
+//
+//    // 리프레시 토큰 헤더 설정
+//    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
+//        response.setHeader("refreshToken", "bearer "+ refreshToken);
+//    }
 
 
     //토큰 암호화
-    public TokenInfo encToken(TokenInfo tokenInfo) {
-        if(isBlank(tokenInfo.getAccessToken()) || isBlank(tokenInfo.getRefreshToken())) {
+    public String encToken(String token) {
+        if(isBlank(token) || isBlank(token)) {
             throw new ApiException(ILLEGAL_TOKEN_VALUE);
         } else {
-            tokenInfo.encToken(urlEncrypt(tokenInfo.getAccessToken()), urlEncrypt(tokenInfo.getRefreshToken()));
+            return urlEncrypt(token);
         }
-        return tokenInfo;
     }
 
     // 토큰 복호화
@@ -227,6 +158,17 @@ public class JwtTokenProvider {
             throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
         }
         return token;
+    }
+
+    private PrivateClaims convert(Claims claims) {
+        return new PrivateClaims(claims.get(USER_ID, String.class), claims.get(ROLE_TYPES, UserRole.class));
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PrivateClaims {
+        private String memberId;
+        private UserRole roleTypes;
     }
 
 //    public TokenInfo getTokenInfo(String token) {

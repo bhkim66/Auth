@@ -1,5 +1,6 @@
 package com.bhkim.auth.controller.api;
 
+import com.bhkim.auth.common.UserRole;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.repository.AuthRepository;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.bhkim.auth.common.TypeEnum.M;
+import static com.bhkim.auth.common.UserRole.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @Slf4j
@@ -50,7 +52,7 @@ class AuthControllerTest {
                 .name("김병호")
                 .age(20)
                 .sex(M)
-                .role("ADMIN")
+                .role(ADMIN)
                 .build();
     }
 

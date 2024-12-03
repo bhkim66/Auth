@@ -11,7 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 import java.util.UUID;
 
-import static com.bhkim.auth.common.RoleEnum.*;
+import static com.bhkim.auth.common.UserRole.*;
 import static com.bhkim.auth.common.TypeEnum.*;
 
 @Data
@@ -64,7 +64,7 @@ public class UserRequestDTO {
                     .sex(this.sex)
                     .age(this.age)
                     .phoneNumber(this.phoneNumber)
-                    .role(USER.toString())
+                    .role(USER)
                     .status(PENDING)
                     .accessCode(UUID.randomUUID().toString())
                     .build();

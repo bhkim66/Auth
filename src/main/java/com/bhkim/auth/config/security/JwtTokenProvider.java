@@ -31,10 +31,6 @@ import static io.micrometer.common.util.StringUtils.isBlank;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
-    private static final Long ACCESS_TOKEN_EXPIRE_TIME =  30 * 60 * 1000L;             // 30분
-    private static final Long ACCESS_TOKEN_EXPIRE_TIME_LOCAL = 12 * 60 * 60 * 1000L;    // 12시간
-    private static final Long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
-
     private final Key key = Keys.secretKeyFor(KEY_USE_ALGORITHM);
     private final JwtHandler jwtHandler;
     private final RedisHandler redisHandler;
@@ -50,10 +46,6 @@ public class JwtTokenProvider {
 //                    .build();
 
     public String generateToken(PrivateClaims privateClaims) {
-        System.out.println("privateClaims.getMemberId() = " + privateClaims.getMemberId());
-        System.out.println("USER_ID = " + USER_ID);
-        System.out.println("privateClaims.getRoleTypes() = " + privateClaims.getRoleTypes());
-        System.out.println("key = " + key);
         return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getMemberId(), ROLE_TYPES, privateClaims.getRoleTypes()), ACCESS_TOKEN_EXPIRE_TIME, key);
     }
 

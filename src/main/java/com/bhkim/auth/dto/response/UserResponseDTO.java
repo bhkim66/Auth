@@ -26,12 +26,4 @@ public class UserResponseDTO {
             this.phoneNumber = user.getPhoneNumber();
         }
     }
-
-    @Builder
-    @ToString
-    public static class Token {
-        private String accessToken;
-        private String refreshToken;
-        private LocalDateTime publishTime;
-    }
 }

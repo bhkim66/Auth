@@ -3,6 +3,8 @@ package com.bhkim.auth.handler;
 import com.bhkim.auth.exception.ApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -10,34 +12,44 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.bhkim.auth.common.ConstDef.KEY_USE_ALGORITHM;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE;
 
 @Component
 public class JwtHandler {
     private static final String BEARER_TYPE = "Bearer";
+    private final Key key;
+
+    public JwtHandler() {
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public String createJwt(Map<String, Object> privateClaims, long expireTime, Key key) {
+    public String createJwt(Map<String, Object> privateClaims, long expireTime) {
         Date now = new Date();
         Date accessTokenExpiresIn = new Date(now.getTime() + expireTime);
 
-        return BEARER_TYPE + " " + Jwts.builder()
+        return Jwts.builder()
                 .setIssuedAt(now) // 토큰 발급 시간
                 .setIssuer("auth.bhkim.com") // 토큰 발급자
                 .setClaims(privateClaims)
                 .setExpiration(accessTokenExpiresIn) // 만료 시간
-                .signWith(key, KEY_USE_ALGORITHM) // 사용 암호 알고리즘
+                .signWith(key, SignatureAlgorithm.HS256) // 사용 암호 알고리즘
                 .compact();
     }
 
-    public Optional<Claims> checkRefreshToken(String refreshToken, String redisRefreshToken, String key) {
+    public Optional<Claims> checkRefreshToken(String refreshToken, String redisRefreshToken) {
         if (!refreshToken.equals(redisRefreshToken)) {
             throw new ApiException(INVALID_TOKEN_VALUE);
         }
+        return getClaims(refreshToken);
+    }
+
+    public Optional<Claims> getClaims(String token) {
         return Optional.of(Jwts.parserBuilder()
-                .setSigningKey(key.getBytes())
-                .build().parseClaimsJws(refreshToken).getBody());
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody());
     }
 
 //    public String getUserIdFromJWT(String token) {

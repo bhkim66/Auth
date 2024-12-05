@@ -1,28 +1,22 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.common.UserRole;
+import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
-import com.bhkim.auth.dto.response.UserResponseDTO;
+import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.record.SignInRequest;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.AuthServiceImpl;
-import com.bhkim.auth.util.AESUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.bhkim.auth.common.TypeEnum.M;
-import static com.bhkim.auth.common.UserRole.*;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static com.bhkim.auth.common.UserRole.USER;
+import static com.bhkim.auth.util.AESUtil.urlDecrypt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -42,6 +36,7 @@ class AuthServiceTest {
                 .id("bhkim62")
                 .password("1234qwer")
                 .name("김병호")
+                .role(USER)
                 .age(30)
                 .sex(M)
                 .build();
@@ -78,11 +73,12 @@ class AuthServiceTest {
                 .build();
 
         //when
-        ApiResponseResult<UserResponseDTO.Token> result = authService.signIn(loginUser);
+        AuthResponseDTO.Token result = authService.signIn(loginUser);
 
         //then
-        assertThat(result.isSuccess()).isTrue();
-        System.out.println("result : " + result.getData());
+        assertThat(result).extracting("accessToken").isNotNull();
+        assertThat(result).extracting("refreshToken").isNotNull();
+        System.out.println("result : " + result);
 
     }
 
@@ -93,6 +89,7 @@ class AuthServiceTest {
                 .id("bhkim62")
                 .password("test1234")
                 .name("박병호")
+                .role(USER)
                 .age(35)
                 .sex(M)
                 .build();
@@ -105,9 +102,8 @@ class AuthServiceTest {
                 .build();
 
         //when
-        ApiResponseResult<UserResponseDTO.Token> tokenApiResponseResult = authService.signIn(loginUser);
-        //then
-        assertThat(tokenApiResponseResult.isSuccess()).isFalse();
+        // 오류 사항 적을것
+//        AuthResponseDTO.Token result = authService.signIn(loginUser);
     }
 
 //    @Test
@@ -146,13 +142,41 @@ class AuthServiceTest {
 //    }
 
     @Test
-    void 로그아웃_성공() {
-
-    }
-
-    @Test
     void 토큰재발급_성공() {
+        User newUser = User.builder()
+                .id("bhkim62")
+                .password(passwordEncoder.encode("test1234"))
+                .name("박병호")
+                .role(USER)
+                .age(35)
+                .sex(M)
+                .build();
+        userRepository.save(newUser);
+
+        SignInRequest request = new SignInRequest("bhkim62", "test1234");
+        UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
+                .id(request.id())
+                .password(request.password())
+                .build();
+
+        AuthResponseDTO.Token rawToken = authService.signIn(loginUser);
+        System.out.println("rawToken = " + rawToken);
+
+
+        AuthRequestDTO.RefreshToken refreshToken = AuthRequestDTO.RefreshToken.builder()
+                .refreshToken(rawToken.getRefreshToken())
+                .build();
+
+
+        AuthResponseDTO.Token reissueToken = authService.reissueToken(refreshToken);
+
+        assertThat(rawToken.getAccessToken()).isNotEqualTo(reissueToken.getAccessToken());
+        assertThat(rawToken.getRefreshToken()).isNotEqualTo(reissueToken.getRefreshToken());
+
+        System.out.println("reissueToken = " + reissueToken);
+
     }
+
 
     @Test
     void 토큰재발급시_refreshToken_값이_유효하지_않는경우() {

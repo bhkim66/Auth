@@ -10,6 +10,7 @@ import com.bhkim.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,57 +27,55 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponseResult<UserResponseDTO.UserInfo> getMemberInfo(Long userSeq) {
+    public UserResponseDTO.UserInfo getMemberInfo(Long userSeq) {
         User user = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
-        UserResponseDTO.UserInfo userResponseDto = user.toDto(user);
-
-        return ApiResponseResult.success(userResponseDto);
+        return user.toDto(user);
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> signUp(UserRequestDTO.Signup signup) {
+    public ResponseEntity<Void> signUp(UserRequestDTO.Signup signup) {
         signup.setPassword(passwordEncoder.encode(signup.getPassword()));
         User savedUser = userRepository.save(signup.toUserEntity());
 
         if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
         }
-        return ApiResponseResult.success(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> checkDuplicateId(String id) {
+    public ResponseEntity<Boolean> checkDuplicateId(String id) {
         boolean existUser = userRepository.existsById(id);
 
         if(existUser) {
             throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
         }
-        return ApiResponseResult.success(HttpStatus.OK);
+        return ResponseEntity.ok(true);
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> authenticateMail(String accessCode, Long userSeq) {
+    public HttpStatus authenticateMail(String accessCode, Long userSeq) {
 
         return null;
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo, Long userSeq) {
+    public ResponseEntity<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo, Long userSeq) {
         //jwt로 멤버 조회가 필요함
         User findUser = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         User updateUser = findUser.toEntity(updateUserInfo);
 
         findUser.update(updateUser);
-        return ApiResponseResult.success(HttpStatus.OK);
+        return ResponseEntity.ok(true);
     }
 
     @Override
     @Transactional
-    public ApiResponseResult<HttpStatus> changePassword(UserRequestDTO.UpdatePassword rawPassword, Long userSeq) {
+    public ResponseEntity<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword, Long userSeq) {
         User findUser = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         // 이전 패스워드와 같은지 체크
         if(passwordEncoder.matches(rawPassword.getPassword(), findUser.getPassword())) {
@@ -85,7 +84,7 @@ public class UserServiceImpl implements UserService {
 
         String encodePassword = passwordEncoder.encode(rawPassword.getPassword());
         findUser.updatePassWord(encodePassword);
-        return ApiResponseResult.success(HttpStatus.OK);
+        return ResponseEntity.ok(true);
     }
 
 }

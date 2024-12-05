@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,11 +61,11 @@ class UserServiceTest {
         em.persist(userEntity);
         em.flush();
         // when
-        ApiResponseResult<UserResponseDTO.UserInfo> memberInfo = userService.getMemberInfo(userSeq);
+        UserResponseDTO.UserInfo memberInfo = userService.getMemberInfo(userSeq);
 
         // then
         // 반환된 결과가 성공 인지를 확인
-        assertThat(memberInfo.getData()).extracting("id").isEqualTo(signup.id());
+        assertThat(memberInfo).extracting("id").isEqualTo(signup.id());
     }
 
     @Test
@@ -86,14 +87,13 @@ class UserServiceTest {
 //        given(userRepository.save(any())).willReturn(signup);
 
         // when
-        ApiResponseResult<HttpStatus> result = userService.signUp(signupDTO);
+        ResponseEntity<Void> result = userService.signUp(signupDTO);
         em.flush();
-        ApiResponseResult<UserResponseDTO.UserInfo> memberInfo = userService.getMemberInfo(userSeq);
+        UserResponseDTO.UserInfo memberInfo = userService.getMemberInfo(userSeq);
 
         // then
         // 반환된 결과가 성공 인지를 확인
-        assertThat(memberInfo.getData()).extracting("id").isEqualTo(signup.id());
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(memberInfo).extracting("id").isEqualTo(signup.id());
     }
 
     @Test
@@ -140,9 +140,9 @@ class UserServiceTest {
 //        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
 
         // when
-        ApiResponseResult<HttpStatus> result = userService.checkDuplicateId(newId);
+        ResponseEntity<Boolean> result = userService.checkDuplicateId(newId);
         // then
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getBody()).isTrue();
     }
 
     @Test
@@ -183,10 +183,10 @@ class UserServiceTest {
         em.persist(user);
         em.flush();
         // when
-        ApiResponseResult<HttpStatus> result = userService.authenticateMail("1234asdf-basdfwqwer-asdf325w1b", userSeq);
+        HttpStatus result = userService.authenticateMail("1234asdf-basdfwqwer-asdf325w1b", userSeq);
 
         // then
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result).isEqualTo(HttpStatus.OK);
 
 
     }
@@ -238,11 +238,11 @@ class UserServiceTest {
                 .build();
 
         //when
-        ApiResponseResult<HttpStatus> result = userService.updateUser(updateUserInfo, userSeq);
+        ResponseEntity<Boolean> result = userService.updateUser(updateUserInfo, userSeq);
 
         em.flush();
         //then
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getBody()).isTrue();
     }
 
     @Test
@@ -265,11 +265,11 @@ class UserServiceTest {
                 .build();
 
         //when
-        ApiResponseResult<HttpStatus> result = userService.changePassword(requestUserInfo, userSeq);
+        ResponseEntity<Boolean> result = userService.changePassword(requestUserInfo, userSeq);
 
         em.flush();
         //then
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getBody()).isTrue();
     }
 
     @Test

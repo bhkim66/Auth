@@ -44,8 +44,8 @@ public class RedisHandler {
         return (String) redisTemplate.opsForValue().get(key);
     }
 
-    public String getHashData(String id, String key){
-        return (String) redisTemplate.opsForHash().get(id, key);
+    public String getHashData(String key, String hashKey){
+        return (String) redisTemplate.opsForHash().get(key, hashKey);
     }
 
     public void deleteData(String key){

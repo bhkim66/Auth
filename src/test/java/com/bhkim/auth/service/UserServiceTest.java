@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.bhkim.auth.common.TypeEnum.M;
-import static com.bhkim.auth.common.UserRole.USER;
+import static com.bhkim.auth.common.RoleEnum.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

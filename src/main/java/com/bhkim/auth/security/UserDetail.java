@@ -1,6 +1,6 @@
 package com.bhkim.auth.security;
 
-import com.bhkim.auth.common.UserRole;
+import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.entity.jpa.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +36,7 @@ public class UserDetail implements UserDetails {
         return user.getId();
     }
 
-    public UserRole getRole() {
+    public RoleEnum getRole() {
         return user.getRole();
     }
 }

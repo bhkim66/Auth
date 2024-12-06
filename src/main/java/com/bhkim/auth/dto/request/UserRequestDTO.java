@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
-import static com.bhkim.auth.common.UserRole.*;
+import static com.bhkim.auth.common.RoleEnum.*;
 import static com.bhkim.auth.common.TypeEnum.*;
 
 @Data

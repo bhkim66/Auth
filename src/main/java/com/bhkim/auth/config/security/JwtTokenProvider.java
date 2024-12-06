@@ -1,6 +1,6 @@
 package com.bhkim.auth.config.security;
 
-import com.bhkim.auth.common.UserRole;
+import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.handler.JwtHandler;
 import com.bhkim.auth.handler.RedisHandler;
@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static com.bhkim.auth.common.ConstDef.*;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
@@ -31,7 +30,7 @@ public class JwtTokenProvider {
     @AllArgsConstructor
     public static class PrivateClaims {
         private String userId;
-        private UserRole roleTypes;
+        private RoleEnum roleTypes;
     }
 
     public String generateToken(PrivateClaims privateClaims, Long expireTime) {
@@ -111,6 +110,6 @@ public class JwtTokenProvider {
 //    }
 
     private PrivateClaims convert(Claims claims) {
-        return new PrivateClaims(claims.get(USER_ID, String.class), UserRole.valueOf(claims.get(ROLE_TYPES, String.class)));
+        return new PrivateClaims(claims.get(USER_ID, String.class), RoleEnum.valueOf(claims.get(ROLE_TYPES, String.class)));
     }
 }

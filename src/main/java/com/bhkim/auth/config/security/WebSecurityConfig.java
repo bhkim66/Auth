@@ -1,5 +1,6 @@
 package com.bhkim.auth.config.security;
 
+import com.bhkim.auth.common.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,7 +39,8 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**", "/public/**", "/test/**" ).permitAll()
+                        .requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/test/**").hasRole(RoleEnum.USER.name())
                         .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling ->

@@ -1,20 +1,32 @@
 package com.bhkim.auth.controller.api;
 
+import com.bhkim.auth.config.security.JwtTokenProvider;
+import com.bhkim.auth.config.security.WebSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@SpringBootTest
-@WebMvcTest(controllers = TestControllerTest.class)
+@WebMvcTest(controllers = TestController.class)
+@Import({WebSecurityConfig.class})
 class TestControllerTest {
     @Autowired
     private MockMvc mvc;
+
+
+    @MockBean
+    JwtTokenProvider jwtTokenProvider;
 
     @Test
     void GET매핑_테스트() throws Exception {
@@ -26,5 +38,23 @@ class TestControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").value("test"));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void ROLE이_맞는경우() throws Exception {
+        mvc.perform(get("/test/health-check").header(
+                        "X-AUTH-TOKEN", ""))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void ROLE이_다를경우() throws Exception {
+        mvc.perform(get("/test/health-check").header(
+                        "X-AUTH-TOKEN", ""))
+                .andExpect(status().is4xxClientError())
+                .andDo(print());
     }
 }

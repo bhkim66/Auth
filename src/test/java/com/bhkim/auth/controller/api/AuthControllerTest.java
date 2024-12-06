@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("default") //테스트시 실행할 profile
 @WebMvcTest(controllers = AuthController.class)
 @Import({WebSecurityConfig.class})
-//@WebMvcTest(controllers = AuthController.class)
 class AuthControllerTest {
     @Autowired
     MockMvc mvc;
@@ -60,7 +59,6 @@ class AuthControllerTest {
 
     @Test
     void signIn() throws Exception {
-//        log.info("권한 = {} ", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"1234\"}";
         mvc.perform(post("/auth/sign-in")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,6 +71,9 @@ class AuthControllerTest {
     void 인증요청_필요한_api() throws Exception {
         mvc.perform(get("/user/sign-out").header(
                         "X-AUTH-TOKEN", ""))
-                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError())
+                .andDo(print());
     }
+
+
 }

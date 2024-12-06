@@ -25,7 +25,7 @@ public class TestController {
         return ResponseEntity.ok(result);
     }
 
-    @RequestMapping("/health-check")
+    @GetMapping("/health-check")
     public ResponseEntity<ApiResponseResult<String>> healthCheck() {
         return ResponseEntity.ok(ApiResponseResult.success("ok"));
     }

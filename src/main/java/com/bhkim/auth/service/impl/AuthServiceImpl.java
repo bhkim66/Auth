@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup) {
-        signup.setPassword(passwordEncoder.encode(signup.getPassword()));
+        signup.setPasswordEncoding(passwordEncoder);
         User savedUser = userRepository.save(signup.toUserEntity());
 
         if(savedUser.getSeq() < 0) {

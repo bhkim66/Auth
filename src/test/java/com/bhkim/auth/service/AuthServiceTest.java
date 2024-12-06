@@ -1,7 +1,6 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
@@ -58,7 +57,7 @@ class AuthServiceTest {
     UserRequestDTO.Signup getUserInfo(User m) {
         User user = getUser();
         return UserRequestDTO.Signup.builder()
-                .id(user.getId())
+                .userId(user.getId())
                 .name(user.getName())
                 .age(user.getAge())
                 .sex(user.getSex())
@@ -81,7 +80,7 @@ class AuthServiceTest {
 
         SignInRequest request = new SignInRequest("bhkim62", "test1234");
         UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
-                .id(request.id())
+                .userId(request.id())
                 .password(request.password())
                 .build();
 
@@ -110,7 +109,7 @@ class AuthServiceTest {
 
         SignInRequest request = new SignInRequest("bhkim62", "1234qwer");
         UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
-                .id(request.id())
+                .userId(request.id())
                 .password(request.password())
                 .build();
 
@@ -125,7 +124,7 @@ class AuthServiceTest {
         Long userSeq = 1L;
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
         UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
-                .id(signup.id())
+                .userId(signup.id())
                 .password(signup.password())
                 .name(signup.name())
                 .age(signup.age())
@@ -152,7 +151,7 @@ class AuthServiceTest {
         // given
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
         UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
-                .id(signup.id())
+                .userId(signup.id())
                 .password(signup.password())
                 .name(signup.name())
                 .age(signup.age())

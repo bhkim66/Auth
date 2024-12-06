@@ -18,23 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 import static com.bhkim.auth.common.TypeEnum.M;
-import static com.bhkim.auth.common.TypeEnum.PENDING;
 import static com.bhkim.auth.common.UserRole.USER;
-import static com.bhkim.auth.exception.ExceptionEnum.DUPLICATION_VALUE_IN_DATABASE_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @Slf4j
 @SpringBootTest
@@ -61,7 +52,7 @@ class UserServiceTest {
         Long userSeq = 1L;
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
         UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
-                .id(signup.id())
+                .userId(signup.id())
                 .password(signup.password())
                 .name(signup.name())
                 .age(signup.age())
@@ -175,7 +166,7 @@ class UserServiceTest {
 
         SignInRequest request = new SignInRequest("bhkim62", "test1234");
         UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
-                .id(request.id())
+                .userId(request.id())
                 .password(request.password())
                 .build();
 
@@ -199,7 +190,7 @@ class UserServiceTest {
 
         SignInRequest request = new SignInRequest("bhkim62", "test1234");
         UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
-                .id(request.id())
+                .userId(request.id())
                 .password(request.password())
                 .build();
 
@@ -233,7 +224,7 @@ class UserServiceTest {
 
         SignInRequest request = new SignInRequest("bhkim62", "test1234");
         UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
-                .id(request.id())
+                .userId(request.id())
                 .password(request.password())
                 .build();
 

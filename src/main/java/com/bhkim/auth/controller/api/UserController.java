@@ -2,6 +2,8 @@ package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.AuthResponseDTO;
+import com.bhkim.auth.service.AuthService;
 import com.bhkim.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +19,15 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<ApiResponseResult<Void>> signUp(@RequestBody @Valid UserRequestDTO.Signup signup) {
-        return ResponseEntity.ok(userService.signUp(signup));
+    @GetMapping("/sign-out")
+    public ResponseEntity<ApiResponseResult<Void>> signOut() {
+        return ResponseEntity.ok(userService.signOut());
+    }
+
+    @PostMapping("/reissueToken")
+    public ResponseEntity<ApiResponseResult<AuthResponseDTO.Token>> reissueToken() {
+        return null;
+//        return ResponseEntity.ok(ApiResponseResult.success(authService.reissueToken()));
     }
 
     @PutMapping("/update-user")

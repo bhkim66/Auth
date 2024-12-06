@@ -1,21 +1,27 @@
 package com.bhkim.auth.service.impl;
 
 import com.bhkim.auth.config.security.JwtTokenProvider;
+import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.entity.jpa.User;
+import com.bhkim.auth.handler.RedisHandler;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.bhkim.auth.common.ConstDef.ACCESS_TOKEN_EXPIRE_TIME;
+import static com.bhkim.auth.common.ConstDef.REFRESH_TOKEN_EXPIRE_TIME;
 import static com.bhkim.auth.exception.ExceptionEnum.*;
 
 @Slf4j
@@ -27,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisHandler redisHandler;
 
     @Override
     public UserResponseDTO.UserInfo getMemberInfo(Long userSeq) {
@@ -35,26 +42,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup) {
-        signup.setPassword(passwordEncoder.encode(signup.getPassword()));
-        User savedUser = userRepository.save(signup.toUserEntity());
+    public ApiResponseResult<Void> signOut() {
+        //ATK에 문제가 없을 때 redis에 값 삭제
+        String token = "";
 
-        if(savedUser.getSeq() < 0) {
-            throw new ApiException(DATABASE_INSERT_ERROR);
-        }
-        return ApiResponseResult.success();
+        String userId = jwtTokenProvider.getUserId(token);
+        redisHandler.deleteData(userId);
+        SecurityContextHolder.clearContext();
+        return ApiResponseResult.success(null);
     }
 
     @Override
-    public ApiResponseResult<Boolean> checkDuplicateId(String id) {
-        boolean existUser = userRepository.existsById(id);
-
-        if(existUser) {
-            throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
-        }
-        return ApiResponseResult.success(true);
+    public AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token) {
+        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(token.getRefreshToken());
+        String newAccessToken = jwtTokenProvider.generateToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
+        String newRefreshToken = jwtTokenProvider.generateToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
+        return AuthResponseDTO.Token.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
+
+
 
     @Override
     @Transactional

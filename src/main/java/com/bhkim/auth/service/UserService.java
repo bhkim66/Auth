@@ -1,7 +1,9 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
+import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
+import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +21,20 @@ public interface UserService {
     UserResponseDTO.UserInfo getMemberInfo(Long userSeq);
 
     /**
-     * 회원가입
-     * POST
+     * 로그아웃
+     * GET
+     * Redis에 값 소멸, 부여한 TOKEN 값의 유효성 사라짐
      *
-     * @param signup 회원가입 필요한 정보
+     * @return 성공 여부
      */
-    ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup);
+    ApiResponseResult<Void> signOut();
+
+    /**
+     * 토큰 재발행
+     * POST
+     * @return TOKEN 값
+     */
+    AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token);
 
     /**
      * 유저 정보 변경
@@ -44,12 +54,4 @@ public interface UserService {
      */
     ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword);
 
-
-    /**
-     * ID 중복 체크
-     *
-     * @param id the id
-     * @return 중복 여부
-     */
-    ApiResponseResult<Boolean> checkDuplicateId(String id);
 }

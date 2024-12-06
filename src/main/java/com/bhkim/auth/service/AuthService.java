@@ -22,18 +22,19 @@ public interface AuthService {
     AuthResponseDTO.Token signIn(UserRequestDTO.SignIn signup);
 
     /**
-     * 로그아웃
-     * GET
-     * Redis에 값 소멸, 부여한 TOKEN 값의 유효성 사라짐
+     * 회원가입
+     * POST
      *
-     * @return 성공 여부
+     * @param signup 회원가입 필요한 정보
      */
-    ApiResponseResult<Void> signOut();
+    ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup);
 
     /**
-     * 토큰 재발행
-     * POST
-     * @return TOKEN 값
+     * ID 중복 체크
+     *
+     * @param id the id
+     * @return 중복 여부
      */
-    AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token);
+    ApiResponseResult<Boolean> checkDuplicateId(String id);
+
 }

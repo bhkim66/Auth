@@ -6,6 +6,7 @@ import com.bhkim.auth.dto.RedisDTO;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
+import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.handler.RedisHandler;
 import com.bhkim.auth.repository.UserRepository;
@@ -19,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.bhkim.auth.common.ConstDef.*;
-import static com.bhkim.auth.exception.ExceptionEnum.BAD_CREDENTIALS_EXCEPTION;
+import static com.bhkim.auth.exception.ExceptionEnum.*;
 
 @Slf4j
 @Service
@@ -35,6 +37,7 @@ import static com.bhkim.auth.exception.ExceptionEnum.BAD_CREDENTIALS_EXCEPTION;
 public class AuthServiceImpl implements AuthService {
     //    private final AuthRepository authRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisHandler redisHandler;
@@ -70,25 +73,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponseResult<Void> signOut() {
-        //ATK에 문제가 없을 때 redis에 값 삭제
-        String token = "";
+    @Transactional
+    public ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup) {
+        signup.setPassword(passwordEncoder.encode(signup.getPassword()));
+        User savedUser = userRepository.save(signup.toUserEntity());
 
-        String userId = jwtTokenProvider.getUserId(token);
-        redisHandler.deleteData(userId);
-        SecurityContextHolder.clearContext();
-        return ApiResponseResult.success(null);
+        if(savedUser.getSeq() < 0) {
+            throw new ApiException(DATABASE_INSERT_ERROR);
+        }
+        return ApiResponseResult.success();
     }
 
     @Override
-    public AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token) {
-        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(token.getRefreshToken());
-        String newAccessToken = jwtTokenProvider.generateToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
-        String newRefreshToken = jwtTokenProvider.generateToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
-        return AuthResponseDTO.Token.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
+    public ApiResponseResult<Boolean> checkDuplicateId(String id) {
+        boolean existUser = userRepository.existsById(id);
+
+        if(existUser) {
+            throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
+        }
+        return ApiResponseResult.success(true);
     }
 
     private static Map<String, Object> getTokenSaveInRedisToMap(String userId, String refreshToken) {

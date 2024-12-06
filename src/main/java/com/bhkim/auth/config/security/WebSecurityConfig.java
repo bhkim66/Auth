@@ -38,9 +38,9 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/role").hasRole("USER")
+                        .requestMatchers("/auth/loing").hasRole("USER")
                         .requestMatchers("/api/member/**").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
@@ -53,8 +53,8 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        //configuration.addAllowedOrigin("*");
-        configuration.addAllowedOriginPattern("*");
+//        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("http://localhost:*");
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

@@ -21,7 +21,7 @@ import static com.bhkim.auth.exception.ExceptionEnum.MEMBER_REQUIRED;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-//    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
 //    @Value("${kpnp.header.atk}") private String ATK;
 //    @Value("${kpnp.header.rtk}") private String RTK;

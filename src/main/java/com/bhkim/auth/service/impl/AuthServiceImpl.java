@@ -1,5 +1,6 @@
 package com.bhkim.auth.service.impl;
 
+import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.dto.RedisDTO;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
@@ -69,14 +70,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<Void> signOut() {
+    public ApiResponseResult<Void> signOut() {
         //ATK에 문제가 없을 때 redis에 값 삭제
         String token = "";
 
         String userId = jwtTokenProvider.getUserId(token);
         redisHandler.deleteData(userId);
         SecurityContextHolder.clearContext();
-        return ResponseEntity.noContent().build();
+        return ApiResponseResult.success(null);
     }
 
     @Override

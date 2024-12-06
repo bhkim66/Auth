@@ -24,7 +24,7 @@ public interface UserService {
      *
      * @param signup 회원가입 필요한 정보
      */
-    ResponseEntity<Void> signUp(UserRequestDTO.Signup signup);
+    ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup);
 
     /**
      * 유저 정보 변경
@@ -33,7 +33,7 @@ public interface UserService {
      * @param updateUserInfo 유저 정보 변경 정보
      * @return 성공 여부
      */
-    ResponseEntity<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo, Long userSeq);
+    ApiResponseResult<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo);
 
     /**
      * 비밀번호 변경
@@ -42,7 +42,7 @@ public interface UserService {
      * @param rawPassword 회원가입 필요한 정보
      * @return 성공 여부
      */
-    ResponseEntity<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword, Long userSeq);
+    ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword);
 
 
     /**
@@ -51,5 +51,5 @@ public interface UserService {
      * @param id the id
      * @return 중복 여부
      */
-    ResponseEntity<Boolean> checkDuplicateId(String id);
+    ApiResponseResult<Boolean> checkDuplicateId(String id);
 }

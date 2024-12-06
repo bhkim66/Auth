@@ -1,5 +1,6 @@
 package com.bhkim.auth.service;
 
+import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
@@ -27,7 +28,7 @@ public interface AuthService {
      *
      * @return 성공 여부
      */
-    ResponseEntity<Void> signOut();
+    ApiResponseResult<Void> signOut();
 
     /**
      * 토큰 재발행

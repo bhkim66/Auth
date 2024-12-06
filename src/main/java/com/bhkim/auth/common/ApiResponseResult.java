@@ -26,6 +26,10 @@ public class ApiResponseResult<T> {
         return new ApiResponseResult<T>(true, data, null);
     }
 
+    public static <T> ApiResponseResult<T> success() {
+        return new ApiResponseResult<T>(true, null, null);
+    }
+
     public static <T> ApiResponseResult<T> failure(ExceptionEnum e) {
         return new ApiResponseResult<T>(false, null, new ApiError(e.getErrorCode(), e.getErrorMessage()));
     }

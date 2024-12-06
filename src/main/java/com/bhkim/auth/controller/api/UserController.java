@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -19,15 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @RequestMapping("/health-check")
-    public ApiResponseResult<String> healthCheck() {
-        return ApiResponseResult.success("ok");
+    @PostMapping("/sign-up")
+    public ResponseEntity<ApiResponseResult<Void>> signUp(@RequestBody @Valid UserRequestDTO.Signup signup) {
+        return ResponseEntity.ok(userService.signUp(signup));
     }
 
-    @RequestMapping("/sign-up")
-    public ApiResponseResult<ResponseEntity<Void>> signUp(@RequestBody @Valid UserRequestDTO.Signup signup) {
-        return ApiResponseResult.success(userService.signUp(signup));
+    @PutMapping("/update-user")
+    public ResponseEntity<ApiResponseResult<Boolean>> updateUser(@RequestBody @Valid UserRequestDTO.UpdateUserInfo updateUserInfo) {
+        return ResponseEntity.ok(userService.updateUser(updateUserInfo));
     }
 
-
+    @PutMapping("/change-password")
+    public ResponseEntity<ApiResponseResult<Boolean>> changePassword(@RequestBody @Valid UserRequestDTO.UpdatePassword updatePassword) {
+        return ResponseEntity.ok(userService.changePassword(updatePassword));
+    }
 }

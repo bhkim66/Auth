@@ -87,7 +87,7 @@ class UserServiceTest {
 //        given(userRepository.save(any())).willReturn(signup);
 
         // when
-        ResponseEntity<Void> result = userService.signUp(signupDTO);
+        userService.signUp(signupDTO);
         em.flush();
         UserResponseDTO.UserInfo memberInfo = userService.getMemberInfo(userSeq);
 
@@ -140,9 +140,9 @@ class UserServiceTest {
 //        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
 
         // when
-        ResponseEntity<Boolean> result = userService.checkDuplicateId(newId);
+        ApiResponseResult<Boolean> result = userService.checkDuplicateId(newId);
         // then
-        assertThat(result.getBody()).isTrue();
+        assertThat(result.getData()).isTrue();
     }
 
     @Test
@@ -189,11 +189,11 @@ class UserServiceTest {
                 .build();
 
         //when
-        ResponseEntity<Boolean> result = userService.updateUser(updateUserInfo, userSeq);
+        ApiResponseResult<Boolean> result = userService.updateUser(updateUserInfo);
 
         em.flush();
         //then
-        assertThat(result.getBody()).isTrue();
+        assertThat(result.getData()).isTrue();
     }
 
     @Test
@@ -216,11 +216,11 @@ class UserServiceTest {
                 .build();
 
         //when
-        ResponseEntity<Boolean> result = userService.changePassword(requestUserInfo, userSeq);
+        ApiResponseResult<Boolean> result = userService.changePassword(requestUserInfo);
 
         em.flush();
         //then
-        assertThat(result.getBody()).isTrue();
+        assertThat(result.getData()).isTrue();
     }
 
     @Test
@@ -242,6 +242,6 @@ class UserServiceTest {
                 .password("test1234") // 비밀번호 암호화
                 .build();
         //when
-        assertThatThrownBy(() -> userService.changePassword(requestUserInfo, userSeq)).isInstanceOf(ApiException.class).hasMessage("이전 비밀번호와 다른 비밀번호를 입력해주세요");
+        assertThatThrownBy(() -> userService.changePassword(requestUserInfo)).isInstanceOf(ApiException.class).hasMessage("이전 비밀번호와 다른 비밀번호를 입력해주세요");
     }
 }

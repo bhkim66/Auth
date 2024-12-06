@@ -7,7 +7,9 @@ import lombok.Getter;
 public class AuthRequestDTO {
     @Getter
     @Builder
-    public static class RefreshToken {
+    public static class Token {
+        @NotBlank
+        private String accessToken;
         @NotBlank
         private String refreshToken;
     }

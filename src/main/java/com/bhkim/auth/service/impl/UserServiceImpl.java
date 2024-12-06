@@ -20,7 +20,7 @@ import static com.bhkim.auth.exception.ExceptionEnum.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<Boolean> checkDuplicateId(String id) {
         boolean existUser = userRepository.existsById(id);
 
@@ -53,13 +52,6 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
         }
         return ResponseEntity.ok(true);
-    }
-
-    @Override
-    @Transactional
-    public HttpStatus authenticateMail(String accessCode, Long userSeq) {
-
-        return null;
     }
 
     @Override

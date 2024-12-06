@@ -24,7 +24,7 @@ public class JwtHandler {
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public String createJwt(Map<String, Object> privateClaims, long expireTime) {
+    public String createJwt(Map<String, Object> privateClaims, Long expireTime) {
         Date now = new Date();
         Date accessTokenExpiresIn = new Date(now.getTime() + expireTime);
 

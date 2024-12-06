@@ -23,7 +23,6 @@ public interface UserService {
      * POST
      *
      * @param signup 회원가입 필요한 정보
-     * @return 성공 여부
      */
     ResponseEntity<Void> signUp(UserRequestDTO.Signup signup);
 
@@ -47,13 +46,10 @@ public interface UserService {
 
 
     /**
-     * 회원가입 이메일 인증
-     * PUT
+     * ID 중복 체크
      *
-     * @Param accessCode 회원가입 이메일 코드
-     * @return 성공 여부
+     * @param id the id
+     * @return 중복 여부
      */
-    HttpStatus authenticateMail(String accessCode, Long userSeq);
-
     ResponseEntity<Boolean> checkDuplicateId(String id);
 }

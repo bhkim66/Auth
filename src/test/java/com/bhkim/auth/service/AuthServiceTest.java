@@ -1,6 +1,5 @@
 package com.bhkim.auth.service;
 
-import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
@@ -16,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.bhkim.auth.common.TypeEnum.M;
 import static com.bhkim.auth.common.UserRole.USER;
-import static com.bhkim.auth.util.AESUtil.urlDecrypt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -163,33 +161,73 @@ class AuthServiceTest {
         System.out.println("rawToken = " + rawToken);
 
 
-        AuthRequestDTO.RefreshToken refreshToken = AuthRequestDTO.RefreshToken.builder()
+        AuthRequestDTO.Token token = AuthRequestDTO.Token.builder()
                 .refreshToken(rawToken.getRefreshToken())
                 .build();
 
 
-        AuthResponseDTO.Token reissueToken = authService.reissueToken(refreshToken);
+        AuthResponseDTO.Token reissueToken = authService.reissueToken(token);
+        System.out.println("reissueToken = " + reissueToken);
+        assertThat(rawToken.getAccessToken()).isNotEqualTo(reissueToken.getAccessToken());
+        assertThat(rawToken.getRefreshToken()).isNotEqualTo(reissueToken.getRefreshToken());
+
+    }
+
+    @Test
+    void 토큰재발급시_refreshToken가_만료된_경우() {
+        User newUser = User.builder()
+                .id("bhkim62")
+                .password(passwordEncoder.encode("test1234"))
+                .name("박병호")
+                .role(USER)
+                .age(35)
+                .sex(M)
+                .build();
+        userRepository.save(newUser);
+
+        SignInRequest request = new SignInRequest("bhkim62", "test1234");
+        UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
+                .id(request.id())
+                .password(request.password())
+                .build();
+
+        AuthResponseDTO.Token rawToken = authService.signIn(loginUser);
+        System.out.println("rawToken = " + rawToken);
+
+
+        AuthRequestDTO.Token token = AuthRequestDTO.Token.builder()
+                .refreshToken(rawToken.getRefreshToken())
+                .build();
+
+
+        AuthResponseDTO.Token reissueToken = authService.reissueToken(token);
         assertThat(rawToken.getAccessToken()).isNotEqualTo(reissueToken.getAccessToken());
         assertThat(rawToken.getRefreshToken()).isNotEqualTo(reissueToken.getRefreshToken());
 
         System.out.println("reissueToken = " + reissueToken);
-
-    }
-
-
-    @Test
-    void 토큰재발급시_refreshToken_값이_유효하지_않는경우() {
     }
 
     @Test
-    void accessToken_값이_유효하지_않는경우() {
+    void 로그아웃() {
+        User newUser = User.builder()
+                .id("bhkim62")
+                .password(passwordEncoder.encode("test1234"))
+                .name("박병호")
+                .role(USER)
+                .age(35)
+                .sex(M)
+                .build();
+        userRepository.save(newUser);
+
+        SignInRequest request = new SignInRequest("bhkim62", "test1234");
+        UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
+                .id(request.id())
+                .password(request.password())
+                .build();
+
+        AuthResponseDTO.Token rawToken = authService.signIn(loginUser);
+        System.out.println("rawToken = " + rawToken);
+
+        authService.signOut();
     }
-
-    //given
-
-    //mocking
-
-    //when
-
-    //then
 }

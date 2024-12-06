@@ -1,38 +1,36 @@
 package com.bhkim.auth.service.impl;
 
-import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.dto.RedisDTO;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
-import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.handler.RedisHandler;
 import com.bhkim.auth.repository.UserRepository;
+import com.bhkim.auth.security.UserDetail;
 import com.bhkim.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.bhkim.auth.common.ConstDef.ACCESS_TOKEN_EXPIRE_TIME_LOCAL;
+import static com.bhkim.auth.common.ConstDef.*;
 import static com.bhkim.auth.exception.ExceptionEnum.BAD_CREDENTIALS_EXCEPTION;
-import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_ARGUMENT_ERROR;
-import static com.bhkim.auth.util.AESUtil.urlEncrypt;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
     //    private final AuthRepository authRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -46,20 +44,23 @@ public class AuthServiceImpl implements AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = signIn.toAuthentication();
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
+        Authentication authentication = null;
         try {
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
         } catch (BadCredentialsException e) {
             throw new ApiException(BAD_CREDENTIALS_EXCEPTION);
         }
 
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        User user = userRepository.findById(signIn.getId()).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
+//        User user = userRepository.findById(signIn.getId()).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
 
-        String accessToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()));
-        String refreshToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()));
+        String accessToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()), ACCESS_TOKEN_EXPIRE_TIME);
+        String refreshToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()), REFRESH_TOKEN_EXPIRE_TIME);
 
         // 레디스에 token 값 넣기
-        redisHandler.setHashData(user.getId(), getTokenSaveInRedisToMap(user.getId(), refreshToken), ACCESS_TOKEN_EXPIRE_TIME_LOCAL);
+        redisHandler.setHashData(user.getId(), getTokenSaveInRedisToMap(user.getId(), refreshToken), REFRESH_TOKEN_EXPIRE_TIME);
 
         return AuthResponseDTO.Token.builder()
                 .accessToken(accessToken) // 토큰 암호화
@@ -68,31 +69,32 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<Boolean> signOut() {
-        return null;
+    public ResponseEntity<Void> signOut() {
+        //ATK에 문제가 없을 때 redis에 값 삭제
+        String token = "";
+
+        String userId = jwtTokenProvider.getUserId(token);
+        redisHandler.deleteData(userId);
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.noContent().build();
     }
 
     @Override
-    public AuthResponseDTO.Token reissueToken(AuthRequestDTO.RefreshToken refreshToken) {
-        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(refreshToken.getRefreshToken());
-        String newAccessToken = jwtTokenProvider.generateToken(privateClaims);
-        String newRefreshToken = jwtTokenProvider.generateToken(privateClaims);
+    public AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token) {
+        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(token.getRefreshToken());
+        String newAccessToken = jwtTokenProvider.generateToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
+        String newRefreshToken = jwtTokenProvider.generateToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
         return AuthResponseDTO.Token.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
     }
 
-    @Override
-    public UserRequestDTO.Signup validationToken() {
-        return null;
-    }
-
     private static Map<String, Object> getTokenSaveInRedisToMap(String userId, String refreshToken) {
         return RedisDTO.Token.builder()
                 .userId(userId)
                 .refreshToken(refreshToken)
-                .expiredDateTime(LocalDateTime.now().plusSeconds(ACCESS_TOKEN_EXPIRE_TIME_LOCAL).toString()).build().convertMap();
+                .expiredDateTime(LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRE_TIME).toString()).build().convertMap();
     }
 
 }

@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -22,24 +20,6 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
-        //ssh 추가
-//            RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, Integer.parseInt(port));
-//            LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigBuilder = LettuceClientConfiguration.builder();
-//            clientConfigBuilder.useSsl();
-//
-//            ClientOptions clientOptions = ClientOptions.builder()
-//                    .socketOptions(SocketOptions.builder().keepAlive(true).build())
-//                    .build();
-//
-//            DefaultClientResources clientResources = DefaultClientResources.builder()
-//                    .build();
-//
-//            LettuceClientConfiguration clientConfig = clientConfigBuilder
-//                    .clientOptions(clientOptions)
-//                    .clientResources(clientResources)
-//                    .build();
-//
-//            return new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
     }
 
     @Bean

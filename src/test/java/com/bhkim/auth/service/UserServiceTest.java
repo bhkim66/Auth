@@ -166,55 +166,6 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입_인증메일_인증_성공() {
-        // given
-        Long userSeq = 1L;
-        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
-        User user = User.builder()
-                .id(signup.id())
-                .name(signup.name())
-                .age(signup.age())
-                .sex(signup.sex())
-                .phoneNumber(signup.phoneNumber())
-                .status(PENDING)
-                .accessCode("1234asdf-basdfwqwer-asdf325w1b")
-                .build();
-
-        em.persist(user);
-        em.flush();
-        // when
-        HttpStatus result = userService.authenticateMail("1234asdf-basdfwqwer-asdf325w1b", userSeq);
-
-        // then
-        assertThat(result).isEqualTo(HttpStatus.OK);
-
-
-    }
-
-    @Test
-    void 회원가입_인증메일_인증_실패() {
-        // given
-        Long userSeq = 1L;
-        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
-        User user = User.builder()
-                .id(signup.id())
-                .name(signup.name())
-                .age(signup.age())
-                .sex(signup.sex())
-                .phoneNumber(signup.phoneNumber())
-                .status(PENDING)
-                .accessCode("1234asdf-basdfwqwer-asdf325w1b")
-                .build();
-
-        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
-        given(userRepository.save(any())).willReturn(user);
-
-        // when
-        // then
-        assertThatThrownBy(() -> userService.authenticateMail("1234asdf-basdfwqwer-wrongcode", userSeq)).isInstanceOf(ApiException.class).hasMessage("잘못된 인증 코드 입니다");
-    }
-
-    @Test
     void 멤버_정보_수정_성공() {
         //given
         User existUser = User.builder()

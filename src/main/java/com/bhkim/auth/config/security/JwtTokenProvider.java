@@ -34,13 +34,13 @@ public class JwtTokenProvider {
         private UserRole roleTypes;
     }
 
-    public String generateToken(PrivateClaims privateClaims) {
-        return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getUserId(), ROLE_TYPES, privateClaims.getRoleTypes()), ACCESS_TOKEN_EXPIRE_TIME);
+    public String generateToken(PrivateClaims privateClaims, Long expireTime) {
+        return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getUserId(), ROLE_TYPES, privateClaims.getRoleTypes()), expireTime);
     }
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
     public PrivateClaims parseRefreshToken(String refreshToken) {
-        String redisRefreshToken = redisHandler.getHashData(getUserId(refreshToken), "refreshToken");
+        String redisRefreshToken = redisHandler.getHashData(getUserId(refreshToken), REDIS_KEY_REFRESH_TOKEN);
         return jwtHandler.checkRefreshToken(refreshToken, redisRefreshToken).map(this::convert).orElseThrow();
     }
 

@@ -1,5 +1,6 @@
 package com.bhkim.auth.security;
 
+import com.bhkim.auth.common.UserRole;
 import com.bhkim.auth.entity.jpa.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,14 @@ public class UserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
+        return user.getName();
+    }
+
+    public String getId() {
         return user.getId();
+    }
+
+    public UserRole getRole() {
+        return user.getRole();
     }
 }

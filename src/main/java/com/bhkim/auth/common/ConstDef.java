@@ -17,9 +17,11 @@ public abstract class ConstDef {
     public static final String ROLE_TYPES = "ROLE_TYPES";
     public static final String USER_ID = "USER_ID";
 
-    public static final Long ACCESS_TOKEN_EXPIRE_TIME =  30 * 60 * 1000L;             // 30분
-    public static final Long ACCESS_TOKEN_EXPIRE_TIME_LOCAL = 12 * 60 * 60 * 1000L;    // 12시간
+    public static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;             // 30분
+    public static final Long REFRESH_TOKEN_EXPIRE_TIME = 12 * 60 * 60 * 1000L;             // 30분
     public static final Long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
+
+    public static final String REDIS_KEY_REFRESH_TOKEN = "refreshToken";
 
 
 

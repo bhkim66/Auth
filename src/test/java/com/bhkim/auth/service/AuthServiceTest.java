@@ -169,7 +169,6 @@ class AuthServiceTest {
 
 
         AuthResponseDTO.Token reissueToken = authService.reissueToken(refreshToken);
-
         assertThat(rawToken.getAccessToken()).isNotEqualTo(reissueToken.getAccessToken());
         assertThat(rawToken.getRefreshToken()).isNotEqualTo(reissueToken.getRefreshToken());
 

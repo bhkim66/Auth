@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
     public PrivateClaims parseRefreshToken(String refreshToken) {
-        String redisRefreshToken = redisHandler.getHashData(getUserId(refreshToken), refreshToken);
+        String redisRefreshToken = redisHandler.getHashData(getUserId(refreshToken), "refreshToken");
         return jwtHandler.checkRefreshToken(refreshToken, redisRefreshToken).map(this::convert).orElseThrow();
     }
 
@@ -111,6 +111,6 @@ public class JwtTokenProvider {
 //    }
 
     private PrivateClaims convert(Claims claims) {
-        return new PrivateClaims(claims.get(USER_ID, String.class), claims.get(ROLE_TYPES, UserRole.class));
+        return new PrivateClaims(claims.get(USER_ID, String.class), UserRole.valueOf(claims.get(ROLE_TYPES, String.class)));
     }
 }

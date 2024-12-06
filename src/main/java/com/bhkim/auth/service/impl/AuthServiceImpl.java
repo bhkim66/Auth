@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
         redisHandler.setHashData(user.getId(), getTokenSaveInRedisToMap(user.getId(), refreshToken), ACCESS_TOKEN_EXPIRE_TIME_LOCAL);
 
         return AuthResponseDTO.Token.builder()
-                .accessToken(urlEncrypt(accessToken)) // 토큰 암호화
+                .accessToken(accessToken) // 토큰 암호화
                 .refreshToken(refreshToken)
                 .build();
     }

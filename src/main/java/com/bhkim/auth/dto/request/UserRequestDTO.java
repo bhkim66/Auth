@@ -67,7 +67,6 @@ public class UserRequestDTO {
                     .phoneNumber(this.phoneNumber)
                     .role(USER)
                     .status(PENDING)
-                    .accessCode(UUID.randomUUID().toString())
                     .build();
         }
 

@@ -18,7 +18,7 @@ public interface UserService {
      *
      * @return 멤버 INFO 값
      */
-    UserResponseDTO.UserInfo getMemberInfo(Long userSeq);
+    UserResponseDTO.UserInfo getMemberInfo(String userId);
 
     /**
      * 로그아웃

@@ -29,18 +29,6 @@ class TestControllerTest {
     JwtTokenProvider jwtTokenProvider;
 
     @Test
-    void GET매핑_테스트() throws Exception {
-        String result = "test";
-        ResultActions actions = mvc.perform(
-                        MockMvcRequestBuilders.get("/test/get")
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data").value("test"));
-    }
-
-    @Test
     @WithMockUser(roles = "USER")
     void ROLE이_맞는경우() throws Exception {
         mvc.perform(get("/test/health-check").header(

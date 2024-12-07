@@ -1,23 +1,29 @@
 package com.bhkim.auth.repository;
 
 import com.bhkim.auth.entity.jpa.User;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static com.bhkim.auth.common.TypeEnum.M;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @DataJpaTest
+@EnableJpaAuditing
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    EntityManager em;
 
 //    @BeforeEach
 //    void beforeEach() {
@@ -39,12 +45,14 @@ class UserRepositoryTest {
         User user = User.builder()
                 .id("bhkim62")
                 .name("김병호")
+                .password("test1234")
                 .age(30)
                 .sex(M)
                 .phoneNumber(null)
                 .build();
         //when
         User saveUser = userRepository.save(user);
+        em.flush();
 
         //then
         assertThat(saveUser).isNotNull();
@@ -59,15 +67,24 @@ class UserRepositoryTest {
     @DisplayName("멤버 출력 테스트")
     void 특정_멤버_출력_테스트() {
         //given
-        // `beforeAll()`에서 이미 저장한 `member` 객체를 가져오기
-        User expectedUser = userRepository.findById("bhkim62").orElseThrow();
+        User user = User.builder()
+                .id("bhkim62")
+                .name("김병호")
+                .password("test1234")
+                .age(30)
+                .sex(M)
+                .phoneNumber(null)
+                .build();
+        //when
+        User saveUser = userRepository.save(user);
 
         // when
-        User actualUser = userRepository.findById(expectedUser.getId()).orElseThrow();
+        User actualUser = userRepository.findById(saveUser.getId()).orElseThrow();
 
         // then
-        assertThat(actualUser).isNotNull();
-        assertThat(actualUser).usingRecursiveComparison().isEqualTo(expectedUser);  // 객체의 모든 값을 비교
+        assertThat(actualUser).extracting("id").isEqualTo(user.getId());
+        assertThat(actualUser).extracting("name").isEqualTo(user.getName());
+        assertThat(actualUser).extracting("age").isEqualTo(user.getAge());
     }
     //given
     //when

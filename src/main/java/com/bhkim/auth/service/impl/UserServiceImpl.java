@@ -36,8 +36,8 @@ public class UserServiceImpl implements UserService {
     private final RedisHandler redisHandler;
 
     @Override
-    public UserResponseDTO.UserInfo getMemberInfo(Long userSeq) {
-        User user = userRepository.findBySeq(userSeq).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
+    public UserResponseDTO.UserInfo getMemberInfo(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         return user.toDto(user);
     }
 

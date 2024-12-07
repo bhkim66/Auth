@@ -86,7 +86,6 @@ public class JwtTokenProvider {
                 .build();
         // CustomUserDetail 생성
         CustomUserDetail principal = new CustomUserDetail(user);
-
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 

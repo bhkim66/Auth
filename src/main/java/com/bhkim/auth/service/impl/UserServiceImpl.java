@@ -44,9 +44,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponseResult<Void> signOut() {
         //ATK에 문제가 없을 때 redis에 값 삭제
-        String token = "";
+        String userId = getCurrentUserId();
 
-        String userId = jwtTokenProvider.getUserId(token);
         redisHandler.deleteData(userId);
         SecurityContextHolder.clearContext();
         return ApiResponseResult.success(null);
@@ -68,9 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ApiResponseResult<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo) {
-        //jwt로 멤버 조회가 필요함
-        String token = "";
-        String userId = jwtTokenProvider.getUserId(token);
+        String userId = getCurrentUserId();
 
         User findUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         User updateUser = findUser.toEntity(updateUserInfo);
@@ -82,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword) {
-        String userId = authFacade.getCurrentUserId();
+        String userId = getCurrentUserId();
 //        String userId = jwtTokenProvider.getUserId(token);
 
         User findUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
@@ -96,4 +93,8 @@ public class UserServiceImpl implements UserService {
         return ApiResponseResult.success(true);
     }
 
+
+    private String getCurrentUserId() {
+        return authFacade.getCurrentUserId();
+    }
 }

@@ -106,7 +106,8 @@ class UserServiceTest {
 
 
     @Test
-    void 멤버_정보_수정_성공() {
+    void 멤버_정보_수정_성공() throws Exception {
+        //given
         String userId = "bhkim62";
         UpdateUser updateUser = new UpdateUser("김병호", 30, M, "01029292020");
         UserRequestDTO.UpdateUserInfo updateUserInfo = UserRequestDTO.UpdateUserInfo.builder()
@@ -116,8 +117,28 @@ class UserServiceTest {
                 .phoneNumber(updateUser.phoneNumber())
                 .build();
 
+        String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"test1234\"}";
+
+        //토큰 값 추출
+        String contentAsString = mvc.perform(post("/auth/sign-in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //accessToken 값만 빼내오기
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(contentAsString);
+        String accessToken = rootNode.path("data").path("accessToken").asText();
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        //Authentication 객체 넣기
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         //when
-        ApiResponseResult<Boolean> result = userService.updateUser(updateUserInfo);
+        ApiResponseResult<Boolean> result = userService.uateUser(updateUserInfo);
 
         em.flush();
         //then
@@ -145,7 +166,6 @@ class UserServiceTest {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(contentAsString);
         String accessToken = rootNode.path("data").path("accessToken").asText();
-        System.out.println("contentAsString = " + accessToken);
 
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
@@ -161,10 +181,31 @@ class UserServiceTest {
     }
 
     @Test
-    void 멤버_비밀번호_이전과_동일_값_오류() {
+    void 멤버_비밀번호_이전과_동일_값_오류() throws Exception {
         UserRequestDTO.UpdatePassword requestUserInfo = UserRequestDTO.UpdatePassword.builder()
-                .password(passwordEncoder.encode("test1234")) // 비밀번호 암호화
+                .password("test1234") // 비밀번호 암호화
                 .build();
+
+        String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"test1234\"}";
+
+        //토큰 값 추출
+        String contentAsString = mvc.perform(post("/auth/sign-in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //accessToken 값만 빼내오기
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(contentAsString);
+        String accessToken = rootNode.path("data").path("accessToken").asText();
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        //Authentication 객체 넣기
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         //when
         assertThatThrownBy(() -> userService.changePassword(requestUserInfo)).isInstanceOf(ApiException.class).hasMessage("이전 비밀번호와 다른 비밀번호를 입력해주세요");
     }

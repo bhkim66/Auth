@@ -41,15 +41,19 @@ public class JwtHandler {
         if (!refreshToken.equals(redisRefreshToken)) {
             throw new ApiException(INVALID_TOKEN_VALUE);
         }
-        return getClaims(refreshToken);
+        return parseClaims(refreshToken);
     }
 
-    public Optional<Claims> getClaims(String token) {
+    public Optional<Claims> parseClaims(String token) {
         return Optional.of(Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody());
+    }
+
+    public void setJwtClaimsJws(String token) {
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
     }
 
 //    public String getUserIdFromJWT(String token) {

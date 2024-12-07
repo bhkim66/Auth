@@ -1,7 +1,10 @@
 package com.bhkim.auth.common;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum RoleEnum {
     SUPER_ADMIN("ROLE_SUPER_ADMIN"),
     ADMIN("ROLE_ADMIN"),
@@ -9,10 +12,10 @@ public enum RoleEnum {
 
 
 
-    private final String name;
+    private final String value;
 
-    RoleEnum(String name) {
-        this.name = name;
+    RoleEnum(String value) {
+        this.value = value;
     }
 
     public static TypeEnum findByVal(String v) {

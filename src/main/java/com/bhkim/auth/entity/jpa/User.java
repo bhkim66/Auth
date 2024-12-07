@@ -68,7 +68,6 @@ public class User extends BaseEntity {
         this.password = password;
         this.id = id;
     }
-
     public void update(User user) {
         this.name = user.getName();
         this.age = user.getAge();

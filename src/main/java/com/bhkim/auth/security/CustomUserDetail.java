@@ -3,22 +3,24 @@ package com.bhkim.auth.security;
 import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.entity.jpa.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-public class UserDetail implements UserDetails {
+public class CustomUserDetail implements UserDetails {
     private User user;
 
-    public UserDetail(User user) {
+    public CustomUserDetail(User user) {
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(()-> "ROLE_"+ user.getRole());
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getValue()));
         return authorities;
     }
 

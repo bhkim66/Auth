@@ -4,9 +4,6 @@ package com.bhkim.auth.dto.response;
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.entity.jpa.User;
 import lombok.Builder;
-import lombok.ToString;
-
-import java.time.LocalDateTime;
 
 public class UserResponseDTO {
 

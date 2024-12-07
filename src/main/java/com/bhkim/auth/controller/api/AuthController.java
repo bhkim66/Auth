@@ -19,8 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<ApiResponseResult<AuthResponseDTO.Token>> signIn(@RequestBody UserRequestDTO.SignIn signup) {
-        return ResponseEntity.ok(ApiResponseResult.success(authService.signIn(signup)));
+    public ResponseEntity<ApiResponseResult<AuthResponseDTO.Token>> signIn(@RequestBody UserRequestDTO.SignIn signIn) {
+        return ResponseEntity.ok(ApiResponseResult.success(authService.signIn(signIn)));
     }
 
     @PostMapping("/sign-up")

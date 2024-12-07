@@ -1,6 +1,5 @@
 package com.bhkim.auth.controller.api;
 
-import com.bhkim.auth.config.TestSecurityConfiguration;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.config.security.WebSecurityConfig;
 import com.bhkim.auth.service.impl.AuthServiceImpl;
@@ -9,19 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 @ActiveProfiles("default") //테스트시 실행할 profile
@@ -74,6 +69,5 @@ class AuthControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andDo(print());
     }
-
 
 }

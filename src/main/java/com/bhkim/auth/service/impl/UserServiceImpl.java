@@ -5,16 +5,15 @@ import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
+import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.entity.jpa.User;
+import com.bhkim.auth.facade.AuthFacade;
 import com.bhkim.auth.handler.RedisHandler;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisHandler redisHandler;
+    private final AuthFacade authFacade;
 
     @Override
     public UserResponseDTO.UserInfo getMemberInfo(String userId) {
@@ -82,8 +82,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword) {
-        String token = "";
-        String userId = jwtTokenProvider.getUserId(token);
+        String userId = authFacade.getCurrentUserId();
+//        String userId = jwtTokenProvider.getUserId(token);
 
         User findUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         // 이전 패스워드와 같은지 체크

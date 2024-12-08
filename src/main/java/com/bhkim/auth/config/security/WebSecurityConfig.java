@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/auth/**", "/public/**", "/test/**").permitAll()
                         .requestMatchers("/test/**").hasRole(RoleEnum.USER.name())
                         .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )

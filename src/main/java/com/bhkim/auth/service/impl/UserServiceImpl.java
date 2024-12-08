@@ -45,15 +45,14 @@ public class UserServiceImpl implements UserService {
     public ApiResponseResult<Void> signOut() {
         //ATK에 문제가 없을 때 redis에 값 삭제
         String userId = getCurrentUserId();
-
         redisHandler.deleteData(userId);
         SecurityContextHolder.clearContext();
         return ApiResponseResult.success(null);
     }
 
     @Override
-    public AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token) {
-        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(token.getRefreshToken());
+    public AuthResponseDTO.Token reissueToken(AuthRequestDTO.RefreshToken refreshToken) {
+        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(refreshToken.getRefreshToken());
         String newAccessToken = jwtTokenProvider.generateToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
         String newRefreshToken = jwtTokenProvider.generateToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
         return AuthResponseDTO.Token.builder()
@@ -71,8 +70,8 @@ public class UserServiceImpl implements UserService {
 
         User findUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         User updateUser = findUser.toEntity(updateUserInfo);
-
         findUser.update(updateUser);
+
         return ApiResponseResult.success(true);
     }
 

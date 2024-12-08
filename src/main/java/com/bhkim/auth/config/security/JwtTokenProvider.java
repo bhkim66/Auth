@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.bhkim.auth.common.ConstDef.*;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
@@ -48,6 +49,7 @@ public class JwtTokenProvider {
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
     public PrivateClaims parseRefreshToken(String refreshToken) {
+        validateToken(refreshToken);
         String redisRefreshToken = redisHandler.getHashData(getUserId(refreshToken), REDIS_KEY_REFRESH_TOKEN);
         return jwtHandler.checkRefreshToken(refreshToken, redisRefreshToken).map(this::convert).orElseThrow();
     }
@@ -55,17 +57,17 @@ public class JwtTokenProvider {
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token){
         try {
-            jwtHandler.setJwtClaimsJws(token);
+            Optional<Claims> claims = jwtHandler.parseClaims(token);
 //            existSignOutMemberInRedis(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
+            log.error("Invalid JWT Token");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
+            log.error("Expired JWT Token");
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
+            log.error("Unsupported JWT Token");
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            log.error("JWT claims string is empty.");
         }
         throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
     }

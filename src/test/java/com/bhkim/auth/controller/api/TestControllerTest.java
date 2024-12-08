@@ -1,5 +1,6 @@
 package com.bhkim.auth.controller.api;
 
+import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.config.security.WebSecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,9 @@ class TestControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void ROLE이_다를경우() throws Exception {
+        System.out.println("RoleEnum.USER.name() = " + RoleEnum.USER.name());
+        System.out.println("RoleEnum.USER.name() = " + RoleEnum.USER);
+        System.out.println("RoleEnum.USER.name() = " + RoleEnum.USER.getValue());
         mvc.perform(get("/test/health-check").header(
                         "X-AUTH-TOKEN", ""))
                 .andExpect(status().is4xxClientError())

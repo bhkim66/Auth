@@ -21,7 +21,7 @@ public enum ExceptionEnum {
     BAD_CREDENTIALS_EXCEPTION(HttpStatus.OK, "E411", "아이디 또는 비밀번호를 잘못 입력했습니다.\n" + "입력하신 내용을 다시 확인해주세요."),
     ILLEGAL_PASSWORD(HttpStatus.BAD_REQUEST, "E412", "이전 비밀번호와 다른 비밀번호를 입력해주세요"),
 
-    INVALID_TOKEN_VALUE(HttpStatus.BAD_REQUEST, "E405", "잘못된 인증 코드 입니다"),
+    INVALID_TOKEN_VALUE(HttpStatus.BAD_REQUEST, "E405", "저장된 토큰과 일치하지 않습니다"),
 
 
     /** 잘못된 메일 인증 코드 */

@@ -52,9 +52,9 @@ public class JwtHandler {
                 .getBody());
     }
 
-    public void setJwtClaimsJws(String token) {
-        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-    }
+//    public void setJwtClaimsJws(String token) {
+//        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+//    }
 
 //    public String getUserIdFromJWT(String token) {
 //        if (token == null || !validateToken(token)) {

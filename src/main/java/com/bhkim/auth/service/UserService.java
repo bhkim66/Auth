@@ -5,8 +5,6 @@ import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 /**
  * 멤버 관련 서비스 로직
@@ -34,7 +32,7 @@ public interface UserService {
      * POST
      * @return TOKEN 값
      */
-    AuthResponseDTO.Token reissueToken(AuthRequestDTO.Token token);
+    AuthResponseDTO.Token reissueToken(AuthRequestDTO.RefreshToken refreshToken);
 
     /**
      * 유저 정보 변경

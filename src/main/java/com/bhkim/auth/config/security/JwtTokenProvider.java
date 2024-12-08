@@ -4,7 +4,6 @@ import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
 import com.bhkim.auth.handler.JwtHandler;
-import com.bhkim.auth.handler.RedisHandler;
 import com.bhkim.auth.security.CustomUserDetail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -18,13 +17,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.bhkim.auth.common.ConstDef.*;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
@@ -34,7 +32,6 @@ import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
     private final JwtHandler jwtHandler;
-    private final RedisHandler redisHandler;
 
     @Getter
     @AllArgsConstructor
@@ -43,14 +40,25 @@ public class JwtTokenProvider {
         private RoleEnum role;
     }
 
+    public Set<RoleEnum> extractUserRole() {
+        return getUserDetail().getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(RoleEnum::valueOf)
+                .collect(Collectors.toSet());
+    }
+
+    private CustomUserDetail getUserDetail() {
+        return (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     public String generateToken(PrivateClaims privateClaims, Long expireTime) {
         return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getUserId(), ROLE, privateClaims.getRole()), expireTime);
     }
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
-    public PrivateClaims parseRefreshToken(String refreshToken) {
+    public PrivateClaims parseRefreshToken(String refreshToken, String redisRefreshToken) {
         validateToken(refreshToken);
-        String redisRefreshToken = redisHandler.getHashData(getUserId(refreshToken), REDIS_KEY_REFRESH_TOKEN);
         return jwtHandler.checkRefreshToken(refreshToken, redisRefreshToken).map(this::convert).orElseThrow();
     }
 
@@ -91,17 +99,20 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-//    private Authentication getAuthentication(String token) {
-//        UserDetails userDetails = customUserDetailsService.loadUserByUsername(token);
-//        return new CustomAuthenticationToken(userDetails, userDetails.getAuthorities()); //(principal, authorities)
-//    }
-
-    public String getUserId(String token) {
+    private String getUserId(String token) {
         if (token.isBlank()) {
             throw new IllegalArgumentException();
         }
         Claims claims = jwtHandler.parseClaims(token).orElseThrow();
         return (String) claims.get(USER_ID);
+    }
+
+    public Map<String, Object> convertMap(String userId, String refreshToken) {
+        return Map.of(
+                REDIS_KEY_USER_ID, userId,
+                REDIS_KEY_REFRESH_TOKEN, refreshToken,
+                REDIS_KEY_EXPIRED_DATE_TIME, LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRE_TIME).toString()
+        );
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드

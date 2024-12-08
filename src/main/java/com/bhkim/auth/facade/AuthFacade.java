@@ -10,7 +10,7 @@ import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 
 @Component
 public class AuthFacade {
-    public CustomUserDetail getCurrentUserDetails() {
+    private CustomUserDetail getCurrentUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ApiException(INVALID_TOKEN_VALUE_ERROR);

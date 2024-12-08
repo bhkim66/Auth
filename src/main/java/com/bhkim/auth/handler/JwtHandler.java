@@ -1,5 +1,6 @@
 package com.bhkim.auth.handler;
 
+import com.bhkim.auth.dto.RedisDTO;
 import com.bhkim.auth.exception.ApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -8,10 +9,12 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.bhkim.auth.common.ConstDef.REFRESH_TOKEN_EXPIRE_TIME;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE;
 
 @Component

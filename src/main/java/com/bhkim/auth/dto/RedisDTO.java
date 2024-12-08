@@ -5,6 +5,8 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import static com.bhkim.auth.common.ConstDef.*;
+
 public class RedisDTO {
     @Builder
     public static class Token {
@@ -14,9 +16,9 @@ public class RedisDTO {
 
         public Map<String, Object> convertMap() {
             return Map.of(
-                    "userId", this.userId,
-                    "refreshToken", this.refreshToken,
-                    "expiredDateTime", this.expiredDateTime
+                    REDIS_KEY_USER_ID, this.userId,
+                    REDIS_KEY_REFRESH_TOKEN, this.refreshToken,
+                    REDIS_KEY_EXPIRED_DATE_TIME, this.expiredDateTime
             );
         }
     }

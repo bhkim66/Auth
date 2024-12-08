@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/test")
-public class TestController {
+@RequestMapping("/admin")
+public class AdminController {
 
     @GetMapping(value = "/get")
     public ResponseEntity<ApiResponseResult<String>> get() {

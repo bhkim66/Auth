@@ -136,7 +136,7 @@ class UserServiceTest {
                 .build();
 
         //when
-        ApiResponseResult<Boolean> result = userService.updateUser(updateUserInfo);
+        ApiResponseResult<Boolean> result = userService.updateUser(updateUserInfo, userId);
 
         em.flush();
         //then
@@ -146,12 +146,13 @@ class UserServiceTest {
     @Test
     void 멤버_비밀번호_수정_성공() throws Exception {
         //given
+        String userId = "bhkim62";
         UserRequestDTO.UpdatePassword requestUserInfo = UserRequestDTO.UpdatePassword.builder()
                 .password("qwer1234") // 비밀번호 암호화
                 .build();
 
         //when
-        ApiResponseResult<Boolean> result = userService.changePassword(requestUserInfo);
+        ApiResponseResult<Boolean> result = userService.changePassword(requestUserInfo, userId);
 
         em.flush();
         //then
@@ -160,12 +161,13 @@ class UserServiceTest {
 
     @Test
     void 멤버_비밀번호_이전과_동일_값_오류() throws Exception {
+        String userId = "bhkim62";
         UserRequestDTO.UpdatePassword requestUserInfo = UserRequestDTO.UpdatePassword.builder()
                 .password("test1234") // 비밀번호 암호화
                 .build();
 
         //when, then
-        assertThatThrownBy(() -> userService.changePassword(requestUserInfo)).isInstanceOf(ApiException.class).hasMessage("이전 비밀번호와 다른 비밀번호를 입력해주세요");
+        assertThatThrownBy(() -> userService.changePassword(requestUserInfo, userId)).isInstanceOf(ApiException.class).hasMessage("이전 비밀번호와 다른 비밀번호를 입력해주세요");
     }
 
     @Test

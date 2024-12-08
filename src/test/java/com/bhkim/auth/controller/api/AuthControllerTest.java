@@ -1,7 +1,7 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.config.security.JwtTokenProvider;
-import com.bhkim.auth.config.security.WebSecurityConfig;
+import com.bhkim.auth.config.security.MockSecurityConfig;
 import com.bhkim.auth.service.impl.AuthServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @ActiveProfiles("default") //테스트시 실행할 profile
 @WebMvcTest(controllers = AuthController.class)
-@Import({WebSecurityConfig.class})
+@Import({MockSecurityConfig.class})
 class AuthControllerTest {
     @Autowired
     MockMvc mvc;
@@ -31,26 +31,6 @@ class AuthControllerTest {
 
     @MockBean
     JwtTokenProvider jwtTokenProvider;
-
-
-
-//    @MockBean
-//    UserRepository userRepository;
-
-//    @BeforeEach
-//    void setUpMember() {
-//        userRepository.save(getUser());
-//    }
-//
-//    User getUser() {
-//        return User.builder()
-//                .id("bhkim")
-//                .name("김병호")
-//                .age(20)
-//                .sex(M)
-//                .role(ADMIN)
-//                .build();
-//    }
 
     @Test
     void signIn() throws Exception {

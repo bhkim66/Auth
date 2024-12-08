@@ -41,7 +41,7 @@ public interface UserService {
      * @param updateUserInfo 유저 정보 변경 정보
      * @return 성공 여부
      */
-    ApiResponseResult<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo);
+    ApiResponseResult<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo, String userId);
 
     /**
      * 비밀번호 변경
@@ -50,6 +50,6 @@ public interface UserService {
      * @param rawPassword 회원가입 필요한 정보
      * @return 성공 여부
      */
-    ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword);
+    ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword, String userId);
 
 }

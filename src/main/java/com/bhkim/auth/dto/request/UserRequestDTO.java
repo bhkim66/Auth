@@ -79,6 +79,9 @@ public class UserRequestDTO {
     @AllArgsConstructor
     public static class UpdateUserInfo {
         @NotBlank
+        private String userId;
+
+        @NotBlank
         @Pattern(regexp = "^[a-zA-Zㄱ-힣][a-zA-Zㄱ-힣 ]*$", message = "이름은 영문 한글로 이뤄져야 합니다")
         private String name;
 
@@ -97,6 +100,9 @@ public class UserRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UpdatePassword {
+        @NotBlank
+        private String userId;
+
         @NotBlank(message = "비밀번호를 입력 해주세요")
 //        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,12}$", message = "영문과 숫자를 혼합한 8~12자리를 입력해야 합니다")
         private String password;

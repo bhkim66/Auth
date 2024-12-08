@@ -1,11 +1,11 @@
 package com.bhkim.auth.config.security;
 
 import com.bhkim.auth.common.RoleEnum;
-import com.bhkim.auth.security.CustomUserDetailsService;
+import com.bhkim.auth.config.security.authorization.manager.AdminAuthorizationManger;
+import com.bhkim.auth.config.security.authorization.manager.UserAuthorizationManger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+
+import static com.bhkim.auth.common.RoleEnum.*;
 
 @EnableWebSecurity
 @Configuration
@@ -37,8 +39,9 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**", "/public/**", "/test/**").permitAll()
-                        .requestMatchers("/test/**").hasRole(RoleEnum.USER.name())
+                        .requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.name())
+//                        .requestMatchers("/admin/**").access(new UserAuthorizationManger())
                         .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling ->

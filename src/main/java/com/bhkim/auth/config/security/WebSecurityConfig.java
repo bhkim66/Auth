@@ -6,6 +6,12 @@ import com.bhkim.auth.config.security.authorization.manager.UserAuthorizationMan
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParseException;
+import org.springframework.expression.ParserContext;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -39,10 +45,10 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**", "/public/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.name())
+                                .requestMatchers("/auth/**", "/public/**").permitAll()
+                                .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.name())
 //                        .requestMatchers("/admin/**").access(new UserAuthorizationManger())
-                        .anyRequest().authenticated() // 모든 요청은 인증 필요
+                                .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
@@ -70,6 +76,30 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+
+        // Customizing expression evaluation to log the result
+
+        handler.setExpressionParser(new ExpressionParser() {
+            @Override
+            public Expression parseExpression(String expressionString) throws ParseException {
+                System.out.println("Evaluating expression: " + expressionString);
+                return this.parseExpression(expressionString, (ParserContext) null);
+            }
+
+
+            @Override
+            public Expression parseExpression(String expressionString, ParserContext context) throws org.springframework.expression.ParseException {
+                System.out.println("Evaluating expression: " + expressionString);
+                return this.parseExpression(expressionString, (ParserContext) null);
+            }
+        });
+
+        return handler;
     }
 
 }

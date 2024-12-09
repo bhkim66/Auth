@@ -4,6 +4,7 @@ import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.entity.jpa.User;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

@@ -2,6 +2,7 @@ package com.bhkim.auth.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,14 +23,14 @@ import java.util.Arrays;
 import static com.bhkim.auth.common.RoleEnum.ADMIN;
 
 @EnableWebSecurity
-@Configuration
+@TestConfiguration
 public class MockSecurityConfig {
 
     @Autowired
     private MockFilter mockFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain mockSecurityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.getValue())

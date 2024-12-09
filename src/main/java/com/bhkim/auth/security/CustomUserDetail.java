@@ -2,6 +2,7 @@ package com.bhkim.auth.security;
 
 import com.bhkim.auth.common.RoleEnum;
 import com.bhkim.auth.entity.jpa.User;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@ToString
 public class CustomUserDetail implements UserDetails {
     private User user;
 

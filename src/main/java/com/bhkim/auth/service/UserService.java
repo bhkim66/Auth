@@ -32,7 +32,7 @@ public interface UserService {
      * POST
      * @return TOKEN 값
      */
-    AuthResponseDTO.Token reissueToken(AuthRequestDTO.RefreshToken refreshToken);
+    AuthResponseDTO.Token reissueToken();
 
     /**
      * 유저 정보 변경

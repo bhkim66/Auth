@@ -4,6 +4,7 @@ import com.bhkim.auth.common.ApiResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +21,13 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<ApiResponseResult<?>> handleException(Exception e) {
         log.error("[Exception] cause ={}, message ={}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
         ExceptionEnum error = ExceptionEnum.INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponseResult<?>> accessDeniedException(Exception e) {
+        log.error("[AccessDeniedException] cause ={}, message ={}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
+        ExceptionEnum error = ExceptionEnum.ACCESS_DENIED;
         return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
     }
 

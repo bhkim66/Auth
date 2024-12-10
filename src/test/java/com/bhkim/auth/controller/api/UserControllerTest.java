@@ -2,6 +2,7 @@ package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.config.security.MockSecurityConfig;
+import com.bhkim.auth.config.security.WebSecurityConfig;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.mock.WithCustomMockUser;
 import com.bhkim.auth.service.UserService;
@@ -19,13 +20,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.bhkim.auth.common.RoleEnum.*;
 import static com.bhkim.auth.common.TypeEnum.M;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@SpringBootTest
 @WebMvcTest(controllers = UserController.class)
-@Import(MockSecurityConfig.class)
+@Import(WebSecurityConfig.class)
 @EnableMethodSecurity
 class UserControllerTest {
     @Autowired
@@ -53,6 +55,25 @@ class UserControllerTest {
 //
 //        // SecurityContextHolder에 인증 정보 설정
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Test
+    void 인증_없는_접근_제한() throws Exception {
+        UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
+                .userId("bhkim62")
+                .name("정병호")
+                .age(31)
+                .sex(M)
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String resourceJson = objectMapper.writeValueAsString(resource);
+
+        mvc.perform(put("/user/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resourceJson))
+                .andExpect(status().is4xxClientError())
+                .andDo(print());
     }
 
     @Test
@@ -92,6 +113,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(resourceJson))
                 .andDo(print())
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is4xxClientError());
     }
 }

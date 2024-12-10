@@ -206,12 +206,12 @@ class UserServiceTest {
 
         Thread.sleep(1000);
 
-        AuthRequestDTO.RefreshToken rt = AuthRequestDTO.RefreshToken.builder()
+        UserRequestDTO.RefreshToken rt = UserRequestDTO.RefreshToken.builder()
                 .refreshToken(refreshToken)
                 .build();
 
         // when
-        AuthResponseDTO.Token reissueToken = userService.reissueToken(rt);
+        AuthResponseDTO.Token reissueToken = userService.reissueToken();
 
         // then
         assertThat(accessToken).isNotEqualTo(reissueToken.getAccessToken());
@@ -245,11 +245,11 @@ class UserServiceTest {
 
         Thread.sleep(1000);
 
-        AuthRequestDTO.RefreshToken rt = AuthRequestDTO.RefreshToken.builder()
+        UserRequestDTO.RefreshToken rt = UserRequestDTO.RefreshToken.builder()
                 .refreshToken(refreshToken+"test")
                 .build();
 
         // when, then
-        assertThatThrownBy(() -> userService.reissueToken(rt)).isInstanceOf(ApiException.class).hasMessage("유효하지 않은 토큰 입니다");
+        assertThatThrownBy(() -> userService.reissueToken()).isInstanceOf(ApiException.class).hasMessage("유효하지 않은 토큰 입니다");
     }
 }

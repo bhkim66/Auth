@@ -7,6 +7,7 @@ import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.security.CustomUserDetail;
 import com.bhkim.auth.service.AuthService;
 import com.bhkim.auth.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +33,12 @@ public class UserController {
     }
 
     @PostMapping("/reissueToken")
-    public ResponseEntity<ApiResponseResult<AuthResponseDTO.Token>> reissueToken() {
-        return null;
-//        return ResponseEntity.ok(ApiResponseResult.success(authService.reissueToken()));
+    public ResponseEntity<ApiResponseResult<AuthResponseDTO.Token>> reissueToken(HttpServletRequest request) {
+        return ResponseEntity.ok(ApiResponseResult.success(userService.reissueToken()));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @PutMapping("/update")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApiResponseResult<Boolean>> updateUser(@RequestBody @Valid UserRequestDTO.UpdateUserInfo updateUserInfo, @AuthenticationPrincipal CustomUserDetail user) {
         return ResponseEntity.ok(userService.updateUser(updateUserInfo, user.getId()));
     }

@@ -4,14 +4,11 @@ import com.bhkim.auth.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLDecoder;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_TOKEN_VALUE;
 import static com.bhkim.auth.exception.ExceptionEnum.INTERNAL_SERVER_ERROR;
 import static io.micrometer.common.util.StringUtils.isBlank;
 

@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -99,20 +102,18 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    private String getUserId(String token) {
-        if (token.isBlank()) {
-            throw new IllegalArgumentException();
-        }
-        Claims claims = jwtHandler.parseClaims(token).orElseThrow();
-        return (String) claims.get(USER_ID);
-    }
-
     public Map<String, Object> convertMap(String userId, String refreshToken) {
         return Map.of(
                 REDIS_KEY_USER_ID, userId,
                 REDIS_KEY_REFRESH_TOKEN, refreshToken,
                 REDIS_KEY_EXPIRED_DATE_TIME, LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRE_TIME).toString()
         );
+    }
+
+    public Optional<String> getTokenInHeader() {
+        return Optional.of(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest().getHeader("Authorization"));
+
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드

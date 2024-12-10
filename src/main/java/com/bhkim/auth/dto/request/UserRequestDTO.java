@@ -78,6 +78,15 @@ public class UserRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class RefreshToken {
+        @NotBlank
+        private String refreshToken;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdateUserInfo {
         @NotBlank
         private String userId;

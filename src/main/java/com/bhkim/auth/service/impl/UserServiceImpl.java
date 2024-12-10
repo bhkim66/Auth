@@ -63,14 +63,17 @@ public class UserServiceImpl implements UserService {
         String newRefreshToken = jwtTokenProvider.generateToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
 
         // 레디스에 token 값 넣기
-        Map<String, Object> hashMap = RedisDTO.Token.builder().userId(userId).refreshToken(newRefreshToken).expiredDateTime(String.valueOf(LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRE_TIME))).build().convertMap();
+        Map<String, Object> hashMap = RedisDTO.Token.builder()
+                .userId(userId)
+                .refreshToken(newRefreshToken)
+                .expiredDateTime(REFRESH_TOKEN_EXPIRE_TIME)
+                .build().convertMap();
         redisHandler.setHashData(userId, hashMap, REFRESH_TOKEN_EXPIRE_TIME);
         return AuthResponseDTO.Token.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
     }
-
 
 
     @Override
@@ -88,7 +91,7 @@ public class UserServiceImpl implements UserService {
     public ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword, String userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         // 이전 패스워드와 같은지 체크
-        if(passwordEncoder.matches(rawPassword.getPassword(), findUser.getPassword())) {
+        if (passwordEncoder.matches(rawPassword.getPassword(), findUser.getPassword())) {
             throw new ApiException(ILLEGAL_PASSWORD);
         }
 

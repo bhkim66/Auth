@@ -37,14 +37,9 @@ public class UserController {
 //        return ResponseEntity.ok(ApiResponseResult.success(authService.reissueToken()));
     }
 
-    @PreAuthorize("hasRole('USER') and (authentication.name == #updateUserInfo?.userId)")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/update")
     public ResponseEntity<ApiResponseResult<Boolean>> updateUser(@RequestBody @Valid UserRequestDTO.UpdateUserInfo updateUserInfo, @AuthenticationPrincipal CustomUserDetail user) {
-        System.out.println("user = " + user);
-        System.out.println("user = " + user.getId());
-        System.out.println("user = " + user.getUsername());
-        System.out.println("user = " + user.getAuthorities());
-        System.out.println("updateUserInfo = " + updateUserInfo.getUserId());
         return ResponseEntity.ok(userService.updateUser(updateUserInfo, user.getId()));
     }
 

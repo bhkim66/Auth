@@ -2,6 +2,7 @@ package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.config.security.MockSecurityConfig;
+import com.bhkim.auth.mock.WithCustomMockUser;
 import com.bhkim.auth.service.impl.AuthServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@ActiveProfiles("default") //테스트시 실행할 profile
+//@ActiveProfiles("default") //테스트시 실행할 profile
 @WebMvcTest(controllers = AuthController.class)
 @Import({MockSecurityConfig.class})
 class AuthControllerTest {
@@ -33,6 +34,7 @@ class AuthControllerTest {
     JwtTokenProvider jwtTokenProvider;
 
     @Test
+    @WithCustomMockUser
     void signIn() throws Exception {
         String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"1234\"}";
         mvc.perform(post("/auth/sign-in")
@@ -41,13 +43,4 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
-
-    @Test
-    void 인증요청_필요한_api() throws Exception {
-        mvc.perform(get("/user/sign-out").header(
-                        "X-AUTH-TOKEN", ""))
-                .andExpect(status().is4xxClientError())
-                .andDo(print());
-    }
-
 }

@@ -12,13 +12,13 @@ public class RedisDTO {
     public static class Token {
         private String userId;
         private String refreshToken;
-        private String expiredDateTime;
+        private Long expiredDateTime;
 
         public Map<String, Object> convertMap() {
             return Map.of(
                     REDIS_KEY_USER_ID, this.userId,
                     REDIS_KEY_REFRESH_TOKEN, this.refreshToken,
-                    REDIS_KEY_EXPIRED_DATE_TIME, this.expiredDateTime
+                    REDIS_KEY_EXPIRED_DATE_TIME, String.valueOf(LocalDateTime.now().plusSeconds(this.expiredDateTime))
             );
         }
     }

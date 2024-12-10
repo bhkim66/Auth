@@ -20,7 +20,7 @@ public abstract class ConstDef {
     public static final Long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
 
     public static final String REDIS_KEY_REFRESH_TOKEN = "refreshToken";
-    public static final String REDIS_KEY_USER_ID = "refreshToken";
+    public static final String REDIS_KEY_USER_ID = "userId";
     public static final String REDIS_KEY_EXPIRED_DATE_TIME = "expiredDateTime";
 
 

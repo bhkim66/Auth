@@ -13,7 +13,7 @@ import static com.bhkim.auth.common.RoleEnum.*;
 public @interface WithCustomMockUser {
     String id() default "bhkim62";
 
-    String role() default "USER";
+    RoleEnum role() default USER;
 
 
 }

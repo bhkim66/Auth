@@ -77,29 +77,4 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-        DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-
-        // Customizing expression evaluation to log the result
-
-        handler.setExpressionParser(new ExpressionParser() {
-            @Override
-            public Expression parseExpression(String expressionString) throws ParseException {
-                System.out.println("Evaluating expression: " + expressionString);
-                return this.parseExpression(expressionString, (ParserContext) null);
-            }
-
-
-            @Override
-            public Expression parseExpression(String expressionString, ParserContext context) throws org.springframework.expression.ParseException {
-                System.out.println("Evaluating expression: " + expressionString);
-                return this.parseExpression(expressionString, (ParserContext) null);
-            }
-        });
-
-        return handler;
-    }
-
 }

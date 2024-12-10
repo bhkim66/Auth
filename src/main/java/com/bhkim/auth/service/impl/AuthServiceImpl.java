@@ -60,7 +60,11 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtTokenProvider.generateToken(new JwtTokenProvider.PrivateClaims(user.getId(), user.getRole()), REFRESH_TOKEN_EXPIRE_TIME);
 
         // 레디스에 token 값 넣기
-        Map<String, Object> hashMap = RedisDTO.Token.builder().userId(user.getId()).refreshToken(refreshToken).expiredDateTime(String.valueOf(LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRE_TIME))).build().convertMap();
+        Map<String, Object> hashMap = RedisDTO.Token.builder()
+                .userId(user.getId())
+                .refreshToken(refreshToken)
+                .expiredDateTime(REFRESH_TOKEN_EXPIRE_TIME)
+                .build().convertMap();
         redisHandler.setHashData(user.getId(), hashMap, REFRESH_TOKEN_EXPIRE_TIME);
 
         return AuthResponseDTO.Token.builder()

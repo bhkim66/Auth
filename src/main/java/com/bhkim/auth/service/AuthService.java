@@ -19,7 +19,7 @@ public interface AuthService {
      * @param signup id, pw 로그인 정보
      * @return TOKEN 값
      */
-    AuthResponseDTO.Token signIn(UserRequestDTO.SignIn signup);
+    AuthResponseDTO.Token signIn(AuthRequestDTO.SignIn signup);
 
     /**
      * 회원가입
@@ -27,7 +27,7 @@ public interface AuthService {
      *
      * @param signup 회원가입 필요한 정보
      */
-    ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup);
+    ApiResponseResult<Void> signUp(AuthRequestDTO.Signup signup);
 
     /**
      * ID 중복 체크

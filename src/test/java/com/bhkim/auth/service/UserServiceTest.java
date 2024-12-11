@@ -24,11 +24,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Optional;
 
 import static com.bhkim.auth.common.TypeEnum.M;
 import static com.bhkim.auth.common.RoleEnum.USER;
@@ -85,7 +91,6 @@ class UserServiceTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -210,6 +215,18 @@ class UserServiceTest {
                 .refreshToken(refreshToken)
                 .build();
 
+        // MockHttpServletRequest 생성
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+
+        // 헤더 값 추가
+        mockRequest.addHeader("Authorization", refreshToken);
+
+        // MockHttpServletRequest를 ServletRequestAttributes에 설정
+        ServletRequestAttributes attributes = new ServletRequestAttributes(mockRequest);
+
+        // RequestContextHolder에 해당 요청 속성 설정
+        RequestContextHolder.setRequestAttributes(attributes, true);
+
         // when
         AuthResponseDTO.Token reissueToken = userService.reissueToken();
 
@@ -243,11 +260,20 @@ class UserServiceTest {
         //Authentication 객체 넣기
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // MockHttpServletRequest 생성
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+
+        // 헤더 값 추가
+        mockRequest.addHeader("Authorization", refreshToken + "test");
+
+        // MockHttpServletRequest를 ServletRequestAttributes에 설정
+        ServletRequestAttributes attributes = new ServletRequestAttributes(mockRequest);
+
+        // RequestContextHolder에 해당 요청 속성 설정
+        RequestContextHolder.setRequestAttributes(attributes, true);
+
         Thread.sleep(1000);
 
-        UserRequestDTO.RefreshToken rt = UserRequestDTO.RefreshToken.builder()
-                .refreshToken(refreshToken+"test")
-                .build();
 
         // when, then
         assertThatThrownBy(() -> userService.reissueToken()).isInstanceOf(ApiException.class).hasMessage("유효하지 않은 토큰 입니다");

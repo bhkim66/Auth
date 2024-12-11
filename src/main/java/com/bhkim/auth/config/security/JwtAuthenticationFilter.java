@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Optional;
 
+import static com.bhkim.auth.common.ConstDef.GET_HEADER_ACCESS_TOKEN;
 import static com.bhkim.auth.exception.ExceptionEnum.MEMBER_REQUIRED;
 
 
@@ -63,6 +64,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> extractToken(ServletRequest request) {
-        return Optional.ofNullable(((HttpServletRequest) request).getHeader("Authorization"));
+        return Optional.ofNullable(((HttpServletRequest) request).getHeader(GET_HEADER_ACCESS_TOKEN));
     }
 }

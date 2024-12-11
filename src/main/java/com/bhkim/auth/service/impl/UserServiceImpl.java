@@ -56,11 +56,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public AuthResponseDTO.Token reissueToken() {
         String userId = getCurrentUserId();
-        String refreshToken = jwtTokenProvider.getTokenInHeader().orElseThrow(() -> new ApiException(ILLEGAL_TOKEN_VALUE));
+        String refreshToken = jwtTokenProvider.getTokenInHeader();
         // refreshToken in Redis
         String redisRefreshToken = redisHandler.getHashData(userId, REDIS_KEY_REFRESH_TOKEN);
 
-        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(refreshToken.getRefreshToken(), redisRefreshToken);
+        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(refreshToken, redisRefreshToken);
         String newAccessToken = jwtTokenProvider.generateToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
         String newRefreshToken = jwtTokenProvider.generateToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
 

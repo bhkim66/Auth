@@ -3,6 +3,7 @@ package com.bhkim.auth.service.impl;
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.dto.RedisDTO;
+import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
@@ -40,13 +41,13 @@ public class AuthServiceImpl implements AuthService {
     private final RedisHandler redisHandler;
 
     @Override
-    public AuthResponseDTO.Token signIn(UserRequestDTO.SignIn signIn) {
+    public AuthResponseDTO.Token signIn(AuthRequestDTO.SignIn signIn) {
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성, 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = signIn.toAuthentication();
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = null;
         try {
+            // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         } catch (BadCredentialsException e) {
@@ -75,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public ApiResponseResult<Void> signUp(UserRequestDTO.Signup signup) {
+    public ApiResponseResult<Void> signUp(AuthRequestDTO.Signup signup) {
         signup.setPasswordEncoding(passwordEncoder);
         User savedUser = userRepository.save(signup.toUserEntity());
 

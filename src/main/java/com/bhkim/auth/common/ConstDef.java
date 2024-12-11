@@ -17,11 +17,14 @@ public abstract class ConstDef {
 
     public static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;             // 30분
     public static final Long REFRESH_TOKEN_EXPIRE_TIME = 12 * 60 * 60 * 1000L;             // 30분
-    public static final Long REDIS_EXPIRE_TIME = 60 * 60 * 1000L;                 // 1시간
+    public static final Long REDIS_EXPIRE_TIME = 12 * 60 * 60 * 1000L;                 // 1시간
 
     public static final String REDIS_KEY_REFRESH_TOKEN = "refreshToken";
     public static final String REDIS_KEY_USER_ID = "userId";
     public static final String REDIS_KEY_EXPIRED_DATE_TIME = "expiredDateTime";
+
+    public static final String GET_HEADER_REFRESH_TOKEN = "Authorization_Refresh";
+    public static final String GET_HEADER_ACCESS_TOKEN = "Authorization_Access";
 
 
 

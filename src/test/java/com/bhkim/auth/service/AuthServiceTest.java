@@ -1,6 +1,7 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
+import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
@@ -64,7 +65,7 @@ class AuthServiceTest {
     void 로그인에_정상적으로_성공() {
         //given
         SignInRequest request = new SignInRequest("bhkim62", "test1234");
-        UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
+        AuthRequestDTO.SignIn loginUser = AuthRequestDTO.SignIn.builder()
                 .userId(request.id())
                 .password(request.password())
                 .build();
@@ -83,7 +84,7 @@ class AuthServiceTest {
     void 로그인시_회원정보가_틀렸을_경우() {
         //given
         SignInRequest request = new SignInRequest("bhkim63", "1234qwer");
-        UserRequestDTO.SignIn loginUser = UserRequestDTO.SignIn.builder()
+        AuthRequestDTO.SignIn loginUser = AuthRequestDTO.SignIn.builder()
                 .userId(request.id())
                 .password(request.password())
                 .build();
@@ -97,7 +98,7 @@ class AuthServiceTest {
     void 회원가입() {
         //given
         SignUpRequest signup = new SignUpRequest("bhkim63", "test1234", "김병호", 30, M, "01029292020");
-        UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
+        AuthRequestDTO.Signup signupDTO = AuthRequestDTO.Signup.builder()
                 .userId(signup.id())
                 .password(signup.password())
                 .name(signup.name())
@@ -121,7 +122,7 @@ class AuthServiceTest {
     void 회원가입_중복id_값_전달_실패() {
         // given
         SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
-        UserRequestDTO.Signup signupDTO = UserRequestDTO.Signup.builder()
+        AuthRequestDTO.Signup signupDTO = AuthRequestDTO.Signup.builder()
                 .userId(signup.id())
                 .password(signup.password())
                 .name(signup.name())

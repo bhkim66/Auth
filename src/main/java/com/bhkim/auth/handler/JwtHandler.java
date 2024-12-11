@@ -40,13 +40,6 @@ public class JwtHandler {
                 .compact();
     }
 
-    public Optional<Claims> checkRefreshToken(String refreshToken, String redisRefreshToken) {
-        if (!refreshToken.equals(redisRefreshToken)) {
-            throw new ApiException(INVALID_TOKEN_VALUE);
-        }
-        return parseClaims(refreshToken);
-    }
-
     public Optional<Claims> parseClaims(String token) {
         return Optional.of(Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -54,20 +47,4 @@ public class JwtHandler {
                 .parseClaimsJws(token)
                 .getBody());
     }
-
-//    public void setJwtClaimsJws(String token) {
-//        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-//    }
-
-//    public String getUserIdFromJWT(String token) {
-//        if (token == null || !validateToken(token)) {
-//            return "";
-//        }
-//        String userId = null;
-//        Claims claims = parseClaims(token);
-//        if (claims != null) {
-//            userId = (String) claims.get("sub");
-//        }
-//        return userId;
-//    }
 }

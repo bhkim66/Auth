@@ -27,7 +27,6 @@ import static com.bhkim.auth.common.RoleEnum.ADMIN;
 @EnableMethodSecurity
 public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,7 +46,6 @@ public class WebSecurityConfig {
                         exceptionHandling.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
                 .build();
     }
 

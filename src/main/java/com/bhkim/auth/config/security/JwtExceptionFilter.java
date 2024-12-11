@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 @Slf4j
 @Component
@@ -26,6 +26,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         ApiResponseResult<String> result = ApiResponseResult.failure(e.getException());
         String resultSrt = objectMapper.writeValueAsString(result);
         res.getWriter().write(resultSrt);
+        res.setStatus(SC_BAD_REQUEST);
         res.flushBuffer();
     }
 

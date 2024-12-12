@@ -29,14 +29,14 @@ public class JwtHandler {
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
     public String createJwt(Map<String, Object> privateClaims, Long expireTime) {
         Date now = new Date();
-        Date accessTokenExpiresIn = new Date(now.getTime() + expireTime);
+        Date expireDate = new Date(now.getTime() + expireTime);
 
         return Jwts.builder()
                 .setIssuedAt(now) // 토큰 발급 시간
                 .setIssuer("auth.bhkim.com") // 토큰 발급자
                 .setClaims(privateClaims)
-                .setExpiration(accessTokenExpiresIn) // 만료 시간
-                .signWith(key, SignatureAlgorithm.HS256) // 사용 암호 알고리즘
+                .setExpiration(expireDate) // 만료 시간
+                .signWith(key) // 사용 암호 알고리즘
                 .compact();
     }
 

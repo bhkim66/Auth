@@ -49,11 +49,9 @@ public class AuthServiceImpl implements AuthService {
         try {
             // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         } catch (BadCredentialsException e) {
             throw new ApiException(BAD_CREDENTIALS_EXCEPTION);
         }
-
         CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
 //        User user = userRepository.findById(signIn.getId()).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
@@ -79,7 +77,6 @@ public class AuthServiceImpl implements AuthService {
     public ApiResponseResult<Void> signUp(AuthRequestDTO.Signup signup) {
         signup.setPasswordEncoding(passwordEncoder);
         User savedUser = userRepository.save(signup.toUserEntity());
-
         if(savedUser.getSeq() < 0) {
             throw new ApiException(DATABASE_INSERT_ERROR);
         }
@@ -89,7 +86,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ApiResponseResult<Boolean> checkDuplicateId(String id) {
         boolean existUser = userRepository.existsById(id);
-
         if(existUser) {
             throw new ApiException(DUPLICATION_VALUE_IN_DATABASE_ERROR);
         }

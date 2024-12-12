@@ -25,6 +25,7 @@ public abstract class ConstDef {
 
     public static final String GET_HEADER_REFRESH_TOKEN = "Authorization_Refresh";
     public static final String GET_HEADER_ACCESS_TOKEN = "Authorization_Access";
+    public static final String HEADER_KEY_AUTHORIZATION = "Authorization";
 
 
 

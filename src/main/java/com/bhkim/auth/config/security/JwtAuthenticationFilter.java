@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,8 +18,8 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Optional;
 
-import static com.bhkim.auth.common.ConstDef.GET_HEADER_ACCESS_TOKEN;
-import static com.bhkim.auth.exception.ExceptionEnum.MEMBER_REQUIRED;
+import static com.bhkim.auth.common.ConstDef.HEADER_KEY_AUTHORIZATION;
+import static com.bhkim.auth.exception.ExceptionEnum.UNAUTHORIZED_EXCEPTION;
 
 
 @Slf4j
@@ -45,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (JwtException e) {
             log.error("e message : {} ", e.getMessage());
-            throw new ApiException(MEMBER_REQUIRED);
+            throw new ApiException(UNAUTHORIZED_EXCEPTION);
         }
         filterChain.doFilter(request, response);
     }
@@ -64,6 +63,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> extractToken(ServletRequest request) {
-        return Optional.ofNullable(((HttpServletRequest) request).getHeader(GET_HEADER_ACCESS_TOKEN));
+        return Optional.ofNullable(((HttpServletRequest) request).getHeader(HEADER_KEY_AUTHORIZATION));
     }
 }

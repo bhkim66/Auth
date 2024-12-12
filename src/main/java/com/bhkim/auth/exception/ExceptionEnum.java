@@ -15,7 +15,7 @@ public enum ExceptionEnum {
     ILLEGAL_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "E400", "잘못된 인수값이 전달 됐습니다"),
 
     /** 인증되지 않은 멤버 접근 */
-    MEMBER_REQUIRED(HttpStatus.UNAUTHORIZED, "E401", "로그인이 필요한 서비스입니다"),
+    UNAUTHORIZED_EXCEPTION(HttpStatus.UNAUTHORIZED, "E401", "인증되지 않은 토큰"),
 
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "E403", "접근 권한이 없습니다"),
 

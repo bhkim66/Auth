@@ -7,7 +7,7 @@ import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 
 /**
- * 멤버 관련 서비스 로직
+ * 인증/인가 체크가 필요한 서비스
  */
 public interface UserService {
     /**
@@ -51,5 +51,4 @@ public interface UserService {
      * @return 성공 여부
      */
     ApiResponseResult<Boolean> changePassword(UserRequestDTO.UpdatePassword rawPassword, String userId);
-
 }

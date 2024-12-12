@@ -49,11 +49,6 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private TypeEnum status;
 
-    @OneToMany(mappedBy = "user")
-    private List<AuthHistory> authHistoryList;
-
-    //    @OneToMany(mappedBy = "user")
-//    private List<GrantedAuthority> roles;
     @Column(name = "ROLE")
     private RoleEnum role;
 

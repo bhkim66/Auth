@@ -2,7 +2,6 @@ package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
-import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
@@ -10,32 +9,32 @@ import com.bhkim.auth.record.SignInRequest;
 import com.bhkim.auth.record.SignUpRequest;
 import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.AuthServiceImpl;
-import com.bhkim.auth.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
-import static com.bhkim.auth.common.TypeEnum.M;
 import static com.bhkim.auth.common.RoleEnum.USER;
+import static com.bhkim.auth.common.TypeEnum.M;
 import static com.bhkim.auth.exception.ExceptionEnum.DUPLICATION_VALUE_IN_DATABASE_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class AuthServiceTest {
     @Autowired
     AuthServiceImpl authService;
 
     @Autowired
     EntityManager em;
-
-    @Autowired
-    UserServiceImpl userService;
 
     @Autowired
     UserRepository userRepository;
@@ -53,12 +52,13 @@ class AuthServiceTest {
                 .age(35)
                 .sex(M)
                 .build();
-        userRepository.save(newUser);
+        em.persist(newUser);
+        em.flush();
     }
 
     @AfterEach
     void afterEach() {
-        userRepository.deleteAll();
+        em.clear();
     }
 
     @Test
@@ -76,8 +76,6 @@ class AuthServiceTest {
         //then
         assertThat(result).extracting("accessToken").isNotNull();
         assertThat(result).extracting("refreshToken").isNotNull();
-        System.out.println("result : " + result);
-
     }
 
     @Test

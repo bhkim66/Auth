@@ -1,7 +1,6 @@
 package com.bhkim.auth.controller.api;
 
 import com.bhkim.auth.config.security.JwtTokenProvider;
-import com.bhkim.auth.config.security.MockSecurityConfig;
 import com.bhkim.auth.config.security.WebSecurityConfig;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.mock.WithCustomMockUser;
@@ -18,9 +17,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.bhkim.auth.common.RoleEnum.*;
+import static com.bhkim.auth.common.RoleEnum.ADMIN;
 import static com.bhkim.auth.common.TypeEnum.M;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,7 +58,6 @@ class UserControllerTest {
     @Test
     void 인증_없는_접근_제한() throws Exception {
         UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
-                .userId("bhkim62")
                 .name("정병호")
                 .age(31)
                 .sex(M)
@@ -80,7 +77,6 @@ class UserControllerTest {
     @WithCustomMockUser
     void USER_권한_유저_테스트() throws Exception {
         UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
-                .userId("bhkim62")
                 .name("정병호")
                 .age(31)
                 .sex(M)
@@ -100,7 +96,6 @@ class UserControllerTest {
     @WithCustomMockUser(id = "adminTester", role = ADMIN)
     void ADMIN_권한_유저_접근불가능_테스트() throws Exception {
         UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
-                .userId("bhkim62")
                 .name("정병호")
                 .age(31)
                 .sex(M)

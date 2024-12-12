@@ -39,7 +39,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                                 .requestMatchers("/auth/**", "/public/**").permitAll()
                                 .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.name())
-//                        .requestMatchers("/admin/**").access(new UserAuthorizationManger())
+    //                          .requestMatchers("/admin/**").access(new UserAuthorizationManger())
                                 .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling ->

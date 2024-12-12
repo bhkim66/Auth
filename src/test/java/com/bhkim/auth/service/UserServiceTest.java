@@ -81,39 +81,13 @@ class UserServiceTest {
                 .age(35)
                 .sex(M)
                 .build();
-        userRepository.save(user);
-
-        // 로그인
-        String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"test1234\"}";
-
-        //토큰 값 추출
-        String contentAsString = mvc.perform(post("/auth/sign-in")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        //accessToken 값만 빼내오기
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(contentAsString);
-        String accessToken = rootNode.path("data").path("accessToken").asText();
-        String refreshToken = rootNode.path("data").path("refreshToken").asText();
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
-        //Authentication 객체 넣기
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        UserRequestDTO.SignIn signIn = UserRequestDTO.SignIn.builder()
-//                .userId("bhkim62")
-//                .password("test1234")
-//                .build();
-//        authService.signIn(signIn);
+        em.persist(user);
+        em.flush();
     }
 
     @AfterEach
     void afterEach() {
-        userRepository.deleteAll();
+        em.clear();
     }
 
 
@@ -187,29 +161,19 @@ class UserServiceTest {
     @Test
     void 토큰재발급_성공() throws Exception {
         // given
-        String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"test1234\"}";
+        SignInRequest request = new SignInRequest("bhkim62", "test1234");
+        AuthRequestDTO.SignIn loginUser = AuthRequestDTO.SignIn.builder()
+                .userId(request.id())
+                .password(request.password())
+                .build();
 
-        //토큰 값 추출
-        String contentAsString = mvc.perform(post("/auth/sign-in")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+        AuthResponseDTO.Token token = authService.signIn(loginUser);
+        String accessToken = token.getAccessToken();
+        String refreshToken = token.getRefreshToken();
 
-        //accessToken 값만 빼내오기
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(contentAsString);
-        String accessToken = rootNode.path("data").path("accessToken").asText();
-        String refreshToken = rootNode.path("data").path("refreshToken").asText();
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
         //Authentication 객체 넣기
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        Thread.sleep(1000);
 
         UserRequestDTO.RefreshToken rt = UserRequestDTO.RefreshToken.builder()
                 .refreshToken(refreshToken)
@@ -227,36 +191,32 @@ class UserServiceTest {
         // RequestContextHolder에 해당 요청 속성 설정
         RequestContextHolder.setRequestAttributes(attributes, true);
 
+        Thread.sleep(1000);
+
         // when
         AuthResponseDTO.Token reissueToken = userService.reissueToken();
 
         // then
         assertThat(accessToken).isNotEqualTo(reissueToken.getAccessToken());
         assertThat(refreshToken).isNotEqualTo(reissueToken.getRefreshToken());
+        System.out.println("accessToken = " + accessToken);
+        System.out.println("reissueToken.getAccessToken() = " + reissueToken.getAccessToken());
     }
 
     @Test
     void 토큰재발급시_refreshToken의_유효하지_않을때() throws Exception {
         // given
-        String requestJson = "{\"userId\":\"bhkim62\", \"password\": \"test1234\"}";
+        SignInRequest request = new SignInRequest("bhkim62", "test1234");
+        AuthRequestDTO.SignIn loginUser = AuthRequestDTO.SignIn.builder()
+                .userId(request.id())
+                .password(request.password())
+                .build();
 
-        //토큰 값 추출
-        String contentAsString = mvc.perform(post("/auth/sign-in")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+        AuthResponseDTO.Token token = authService.signIn(loginUser);
+        String accessToken = token.getAccessToken();
+        String refreshToken = token.getRefreshToken();
 
-        //accessToken 값만 빼내오기
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(contentAsString);
-        String accessToken = rootNode.path("data").path("accessToken").asText();
-        String refreshToken = rootNode.path("data").path("refreshToken").asText();
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
         //Authentication 객체 넣기
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -273,7 +233,6 @@ class UserServiceTest {
         RequestContextHolder.setRequestAttributes(attributes, true);
 
         Thread.sleep(1000);
-
 
         // when, then
         assertThatThrownBy(() -> userService.reissueToken()).isInstanceOf(ApiException.class).hasMessage("유효하지 않은 토큰 입니다");

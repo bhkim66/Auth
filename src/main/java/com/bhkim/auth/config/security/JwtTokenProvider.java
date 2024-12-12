@@ -9,7 +9,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +17,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.bhkim.auth.common.ConstDef.*;
 import static com.bhkim.auth.exception.ExceptionEnum.INVALID_TOKEN_VALUE;
@@ -44,17 +40,6 @@ public class JwtTokenProvider {
         private RoleEnum role;
     }
 
-    public Set<RoleEnum> extractUserRole() {
-        return getUserDetail().getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(RoleEnum::valueOf)
-                .collect(Collectors.toSet());
-    }
-
-    private CustomUserDetail getUserDetail() {
-        return (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
 
     public String generateToken(PrivateClaims privateClaims, Long expireTime) {
         return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getUserId(), ROLE, privateClaims.getRole()), expireTime);
@@ -66,7 +51,6 @@ public class JwtTokenProvider {
             throw new ApiException(INVALID_TOKEN_VALUE);
         }
         return jwtHandler.parseClaims(refreshToken).map(this::convert).orElseThrow();
-
     }
 
     // 토큰 정보를 검증하는 메서드
@@ -106,11 +90,23 @@ public class JwtTokenProvider {
 
     public String getTokenInHeader() {
         String refreshToken = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
-                .getRequest().getHeader(GET_HEADER_REFRESH_TOKEN);
+                .getRequest().getHeader(HEADER_KEY_AUTHORIZATION);
         return validateToken(refreshToken) ? refreshToken : "";
     }
 
     private PrivateClaims convert(Claims claims) {
         return new PrivateClaims(claims.get(USER_ID, String.class), RoleEnum.valueOf(claims.get(ROLE, String.class)));
+
+//    public Set<RoleEnum> extractUserRole() {
+//        return getUserDetail().getAuthorities()
+//                .stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .map(RoleEnum::valueOf)
+//                .collect(Collectors.toSet());
+//    }
+//
+//    private CustomUserDetail getUserDetail() {
+//        return (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    }
     }
 }

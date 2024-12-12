@@ -1,14 +1,13 @@
 package com.bhkim.auth.service.impl;
 
+import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.dto.RedisDTO;
-import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
 import com.bhkim.auth.exception.ApiException;
-import com.bhkim.auth.common.ApiResponseResult;
 import com.bhkim.auth.facade.AuthFacade;
 import com.bhkim.auth.handler.RedisHandler;
 import com.bhkim.auth.repository.UserRepository;
@@ -20,18 +19,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.bhkim.auth.common.ConstDef.*;
-import static com.bhkim.auth.exception.ExceptionEnum.*;
+import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_ARGUMENT_ERROR;
+import static com.bhkim.auth.exception.ExceptionEnum.ILLEGAL_PASSWORD;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -47,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponseResult<Void> signOut() {
         //ATK에 문제가 없을 때 redis에 값 삭제
-        String userId = getCurrentUserId();
+        String userId = authFacade.getCurrentUserId();
         redisHandler.deleteData(userId);
         SecurityContextHolder.clearContext();
         return ApiResponseResult.success(null);
@@ -55,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AuthResponseDTO.Token reissueToken() {
-        String userId = getCurrentUserId();
+        String userId = authFacade.getCurrentUserId();
         String refreshToken = jwtTokenProvider.getTokenInHeader();
         // refreshToken in Redis
         String redisRefreshToken = redisHandler.getHashData(userId, REDIS_KEY_REFRESH_TOKEN);
@@ -82,8 +80,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ApiResponseResult<Boolean> updateUser(UserRequestDTO.UpdateUserInfo updateUserInfo, String userId) {
         User findUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
-        User updateUser = findUser.toEntity(updateUserInfo);
-        findUser.update(updateUser);
+        findUser.update(findUser.toEntity(updateUserInfo));
 
         return ApiResponseResult.success(true);
     }
@@ -100,10 +97,5 @@ public class UserServiceImpl implements UserService {
         String encodePassword = passwordEncoder.encode(rawPassword.getPassword());
         findUser.updatePassWord(encodePassword);
         return ApiResponseResult.success(true);
-    }
-
-
-    private String getCurrentUserId() {
-        return authFacade.getCurrentUserId();
     }
 }

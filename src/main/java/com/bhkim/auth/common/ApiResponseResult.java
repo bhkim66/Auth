@@ -37,6 +37,5 @@ public class ApiResponseResult<T> {
     public static <T> ApiResponseResult<T> failure(String errorCode, String message ) {
         return new ApiResponseResult<T>(false, null, new ApiError(errorCode, message));
     }
-
 }
 

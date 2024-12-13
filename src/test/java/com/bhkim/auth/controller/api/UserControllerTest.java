@@ -17,14 +17,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.bhkim.auth.common.RoleEnum.ADMIN;
+import static com.bhkim.auth.common.RoleEnum.*;
 import static com.bhkim.auth.common.TypeEnum.M;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@SpringBootTest
-@WebMvcTest(controllers = UserController.class)
+@WebMvcTest(controllers = {UserController.class})
 @Import(WebSecurityConfig.class)
 @EnableMethodSecurity
 class UserControllerTest {
@@ -40,23 +41,16 @@ class UserControllerTest {
     @MockBean
     UserDetailsService userDetailsService; // MockBean 사용
 
-    @BeforeEach
-    void setUp() {
-//        CustomUserDetail userDetail = new CustomUserDetail(
-//                User.builder()
-//                        .id("bhkim62")
-//                        .role(RoleEnum.USER)
-//                        .build()
-//        );
-//        UsernamePasswordAuthenticationToken authentication =
-//                new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
-//
-//        // SecurityContextHolder에 인증 정보 설정
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//    @Test
+    void 인증_없는_요청_제한() throws Exception {
+        mvc.perform(get("/user/test"))
+                .andExpect(status().is4xxClientError())
+                .andDo(print());
     }
 
-    @Test
-    void 인증_없는_접근_제한() throws Exception {
+//    @Test
+    @WithCustomMockUser
+    void 인증_정보가_있는_요청() throws Exception {
         UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
                 .name("정병호")
                 .age(31)
@@ -69,12 +63,14 @@ class UserControllerTest {
         mvc.perform(put("/user/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(resourceJson))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
+
+
     @Test
-    @WithCustomMockUser
+    @WithCustomMockUser(id = "bhkim622", role = USER)
     void USER_권한_유저_테스트() throws Exception {
         UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
                 .name("정병호")
@@ -93,8 +89,8 @@ class UserControllerTest {
     }
 
     @Test
-    @WithCustomMockUser(id = "adminTester", role = ADMIN)
-    void ADMIN_권한_유저_접근불가능_테스트() throws Exception {
+    @WithCustomMockUser(id = "guest011", role = GUEST)
+    void user만_접근_가능한_guest_권한이_접근() throws Exception {
         UserRequestDTO.UpdateUserInfo resource = UserRequestDTO.UpdateUserInfo.builder()
                 .name("정병호")
                 .age(31)

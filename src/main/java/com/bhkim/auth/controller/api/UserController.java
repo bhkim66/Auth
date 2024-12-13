@@ -27,6 +27,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    @GetMapping("/test")
+    public ResponseEntity<ApiResponseResult<Void>> test() {
+        return ResponseEntity.ok(ApiResponseResult.success(null));
+    }
+
     @GetMapping("/sign-out")
     public ResponseEntity<ApiResponseResult<Void>> signOut() {
         return ResponseEntity.ok(userService.signOut());

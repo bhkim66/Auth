@@ -14,6 +14,4 @@ public @interface WithCustomMockUser {
     String id() default "bhkim62";
 
     RoleEnum role() default USER;
-
-
 }

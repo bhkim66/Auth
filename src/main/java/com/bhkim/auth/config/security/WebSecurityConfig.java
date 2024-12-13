@@ -20,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 import static com.bhkim.auth.common.RoleEnum.ADMIN;
+import static com.bhkim.auth.common.RoleEnum.USER;
 
 @EnableWebSecurity
 @Configuration
@@ -38,7 +39,7 @@ public class WebSecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                                 .requestMatchers("/auth/**", "/public/**").permitAll()
-                                .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.name())
+//                                .requestMatchers("/user/**").hasAnyAuthority(USER.getValue())
     //                          .requestMatchers("/admin/**").access(new UserAuthorizationManger())
                                 .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )

@@ -11,14 +11,11 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 
 import java.util.List;
 
-import static com.bhkim.auth.common.RoleEnum.*;
-
 public class WithCustomMockUserSecurityContextFactory implements WithSecurityContextFactory<WithCustomMockUser> {
     @Override
     public SecurityContext createSecurityContext(WithCustomMockUser annotation) {
         String id = annotation.id();
         RoleEnum role = annotation.role();
-
 
         CustomUserDetail userDetail = new CustomUserDetail(
                 User.builder()

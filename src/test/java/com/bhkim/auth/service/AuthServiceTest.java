@@ -90,7 +90,7 @@ class AuthServiceTest {
 
         //when
         // 오류 사항 적을것
-//        AuthResponseDTO.Token result = authService.signIn(loginUser);
+        assertThatThrownBy(() -> authService.signIn(loginUser)).hasMessage("아이디 또는 비밀번호를 잘못 입력했습니다.\n" + "입력하신 내용을 다시 확인해주세요.");
     }
 
     @Test

@@ -6,9 +6,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootTest
 class AuthApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
 }

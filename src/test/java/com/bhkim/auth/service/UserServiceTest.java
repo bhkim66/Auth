@@ -151,11 +151,26 @@ class UserServiceTest {
 
     @Test
     void 로그아웃() throws Exception {
+        // given
+        SignInRequest request = new SignInRequest("bhkim62", "test1234");
+        AuthRequestDTO.SignIn loginUser = AuthRequestDTO.SignIn.builder()
+                .userId(request.id())
+                .password(request.password())
+                .build();
+
+        AuthResponseDTO.Token token = authService.signIn(loginUser);
+        String accessToken = token.getAccessToken();
+        String refreshToken = token.getRefreshToken();
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        //Authentication 객체 넣기
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         // when
+        Thread.sleep(1000);
         userService.signOut();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication2 = SecurityContextHolder.getContext().getAuthentication();
         // then
-        assertThat(authentication).isNull();
+        assertThat(authentication2).isNull();
     }
 
     @Test

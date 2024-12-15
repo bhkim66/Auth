@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
         //ATK에 문제가 없을 때 redis에 값 삭제
         String userId = authFacade.getCurrentUserId();
         redisHandler.deleteData(userId);
+
         SecurityContextHolder.clearContext();
         return ApiResponseResult.success(null);
     }

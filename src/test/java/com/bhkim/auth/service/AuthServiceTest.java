@@ -11,6 +11,7 @@ import com.bhkim.auth.repository.UserRepository;
 import com.bhkim.auth.service.impl.AuthServiceImpl;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,7 +134,11 @@ class AuthServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> authService.signUp(signupDTO)).isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(() -> {
+                    authService.signUp(signupDTO);
+                    em.flush();
+                }
+        ).isInstanceOf(ConstraintViolationException.class);
     }
 
     @Test

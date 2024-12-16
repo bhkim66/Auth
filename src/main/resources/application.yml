@@ -107,7 +107,7 @@ spring:
     ansi:
       enabled: ALWAYS
   redis:
-    host: "auth-network"
+    host: "redis-server"
     port: 6379
 
 

@@ -1,7 +1,6 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
-import com.bhkim.auth.config.RedisConfig;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.response.AuthResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
@@ -43,9 +42,6 @@ class AuthServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @Autowired
-    RedisConfig redisConfig;
 
     @BeforeEach
     void setUp() {

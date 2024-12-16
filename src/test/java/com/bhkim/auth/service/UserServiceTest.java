@@ -1,6 +1,7 @@
 package com.bhkim.auth.service;
 
 import com.bhkim.auth.common.ApiResponseResult;
+import com.bhkim.auth.config.RedisConfig;
 import com.bhkim.auth.config.security.JwtTokenProvider;
 import com.bhkim.auth.dto.request.AuthRequestDTO;
 import com.bhkim.auth.dto.request.UserRequestDTO;
@@ -67,6 +68,9 @@ class UserServiceTest {
 
     @Autowired
     JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    RedisConfig redisConfig;
 
     @Autowired
     MockMvc mvc;

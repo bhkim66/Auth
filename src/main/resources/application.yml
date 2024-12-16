@@ -1,0 +1,131 @@
+spring:
+  config:
+    activate:
+      on-profile : default
+  application:
+    name: auth
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:member;MODE=MySQL
+    username: sa
+    password: ''
+  #        hikari:
+  #            connectionTimeout: 30000.0
+  #            idleTimeout: 600000.0
+  #            maxLifetime: 1800000.0
+  #            driver-class-name: org.h2.Driver
+  #            jdbc-url: jdbc:h2:mem:member
+  #            username: sa
+  #            password: ''
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true         # 쿼리 로그 포맷 (정렬)
+        #                show_sql: true           # 쿼리 로그 출력
+        use_sql_comments: true
+  output:
+    ansi:
+      enabled: ALWAYS
+  redis:
+    host: "localhost"
+    port: 6379
+#  mail:
+#    host: smtp.gmail.com
+#    post: 587
+#    username: "bhkim63@gmail.com"
+#    password: "cgbatfcossaderjt"
+#    properties:
+#      mail:
+#        smtp:
+#          connectiontimeout: 1000
+#          debug: true
+#          auth: true
+#          starttls:
+#            enable: true
+
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+logging.level:
+  org.hibernate.SQL: debug            # 로그 파일로 Sql을 출력
+
+
+security:
+  jwt:
+    key: "4a9d8f41b365a9c5e33e3a2c5e16a598"
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+      springframework: info
+
+---
+spring:
+  config:
+    activate:
+      on-profile : dev
+  application:
+    name: auth
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:member;MODE=MySQL
+    username: sa
+    password: ''
+  #        hikari:
+  #            connectionTimeout: 30000.0
+  #            idleTimeout: 600000.0
+  #            maxLifetime: 1800000.0
+  #            driver-class-name: org.h2.Driver
+  #            jdbc-url: jdbc:h2:mem:member
+  #            username: sa
+  #            password: ''
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true         # 쿼리 로그 포맷 (정렬)
+        show_sql: true           # 쿼리 로그 출력
+        use_sql_comments: true
+  output:
+    ansi:
+      enabled: ALWAYS
+  redis:
+    host: "auth-network"
+    port: 6379
+
+
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+      springframework: info
+
+security:
+  jwt:
+    key: "4a9d8f41b365a9c5e33e3a2c5e16a598"

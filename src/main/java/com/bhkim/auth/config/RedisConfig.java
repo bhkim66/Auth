@@ -2,6 +2,7 @@ package com.bhkim.auth.config;
 
 import com.bhkim.auth.properties.RedisProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Slf4j
 @Configuration
 @EnableRedisRepositories
 @RequiredArgsConstructor
@@ -19,6 +21,8 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+        log.info("[REDIS HOST] = {} ", redisProperties.getHost());
+        log.info("[REDIS PORT] = {} ", redisProperties.getPort());
         return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
     }
 

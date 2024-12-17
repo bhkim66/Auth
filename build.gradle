@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
 	id 'java'
 	id 'war'
@@ -6,16 +8,27 @@ plugins {
 }
 
 group = 'com.bhkim'
-version = '0.0.1'
+version = '1.0.0'
+def buildDate = getDate()
+
+static def getDate() {
+	return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
+}
+war.enabled = false
+
+bootWar {
+	archiveBaseName = "auth-" + buildDate
+}
 
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
-war {
-	archiveBaseName = 'auth.war'
-}
+
+
+
+
 
 
 configurations {

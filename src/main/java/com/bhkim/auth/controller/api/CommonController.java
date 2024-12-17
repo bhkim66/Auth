@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/common")
 public class CommonController {
-    @GetMapping("health-test")
+    @GetMapping("/health-test")
     public ResponseEntity<String> healthTest() {
         return ResponseEntity.ok("ok");
     }

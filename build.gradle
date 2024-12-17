@@ -14,7 +14,7 @@ java {
 	}
 }
 war {
-	archiveName 'auth.war'
+	archiveBaseName = 'auth.war'
 }
 
 

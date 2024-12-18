@@ -48,10 +48,10 @@ spring:
 #          auth: true
 #          starttls:
 #            enable: true
-
-
 server:
   port: 8080
+  servlet:
+    context-path: /api
 logging.level:
   org.hibernate.SQL: debug            # 로그 파일로 Sql을 출력
 
@@ -68,6 +68,9 @@ logging:
           descriptor:
             sql: trace
       springframework: info
+
+
+
 
 ---
 spring:
@@ -108,10 +111,10 @@ spring:
     host: "redis-server"
     port: 6379
 
-
-
 server:
   port: 8088
+  servlet:
+    context-path: /api
 logging:
   level:
     org:

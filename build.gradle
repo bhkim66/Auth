@@ -2,13 +2,15 @@ import java.text.SimpleDateFormat
 
 plugins {
 	id 'java'
-	id 'war'
 	id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.bhkim'
 version = '1.0.0'
+apply plugin: 'war'
+
+
 def buildDate = getDate()
 
 static def getDate() {

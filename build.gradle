@@ -16,6 +16,7 @@ def buildDate = getDate()
 static def getDate() {
 	return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
 }
+bootWar.enabled = false
 
 war {
 	archiveBaseName = "auth-" + buildDate

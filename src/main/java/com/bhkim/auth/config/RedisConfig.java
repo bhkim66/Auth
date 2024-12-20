@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
@@ -21,9 +21,9 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        log.info("[REDIS HOST] = {} ", redisProperties.getHost());
-        log.info("[REDIS PORT] = {} ", redisProperties.getPort());
-        return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
+        RedisStandaloneConfiguration rc= new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
+        rc.setPassword(redisProperties.getPassword());
+        return new LettuceConnectionFactory(rc);
     }
 
     @Bean

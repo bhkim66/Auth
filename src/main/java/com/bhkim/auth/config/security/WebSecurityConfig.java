@@ -38,7 +38,7 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                                .requestMatchers("/auth/**", "/public/**", "/common/**").permitAll()
+                                .requestMatchers("/auth/**", "/public/**", "/common/**", "/jenkins/**").permitAll()
 //                                .requestMatchers("/user/**").hasAnyAuthority(USER.getValue())
     //                          .requestMatchers("/admin/**").access(new UserAuthorizationManger())
                                 .anyRequest().authenticated() // 모든 요청은 인증 필요

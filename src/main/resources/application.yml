@@ -70,7 +70,6 @@ logging:
             sql: trace
       springframework: info
 
-
 ---
 spring:
   config:

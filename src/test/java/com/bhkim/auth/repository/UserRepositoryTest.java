@@ -1,21 +1,31 @@
 package com.bhkim.auth.repository;
 
+import com.bhkim.auth.common.TypeEnum;
+import com.bhkim.auth.config.TestQueryDslConfig;
+import com.bhkim.auth.dto.condition.UserSearchCondition;
+import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.User;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.List;
+import java.util.Random;
+
+import static com.bhkim.auth.common.TypeEnum.F;
 import static com.bhkim.auth.common.TypeEnum.M;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @DataJpaTest
 @EnableJpaAuditing
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(TestQueryDslConfig.class)
 class UserRepositoryTest {
 
     @Autowired
@@ -85,7 +95,37 @@ class UserRepositoryTest {
         assertThat(actualUser).extracting("name").isEqualTo(user.getName());
         assertThat(actualUser).extracting("age").isEqualTo(user.getAge());
     }
-    //given
-    //when
-    //then
+
+    @Test
+    void 조건으로_멤버_검색() throws Exception {
+        //given
+        for(int i = 0; i < 100; i++) {
+            TypeEnum sex;
+            if(i % 2 == 0) {
+                sex = F;
+            } else {
+                sex = M;
+            }
+            Random random = new Random();
+
+            User user = User.builder()
+                    .id("bhkim" + i)
+                    .name("김병호")
+                    .password("test1234")
+                    .age(random.nextInt(50))
+                    .sex(sex)
+                    .phoneNumber(null)
+                    .build();
+            userRepository.save(user);
+        }
+        em.flush();
+
+        UserSearchCondition userSearchCondition = new UserSearchCondition("bhkim", 0, 46, M);
+        //when
+        List<UserResponseDTO.UserInfo> searchUserList = userRepository.searchUserWithCondition(userSearchCondition);
+
+        //then
+        assertThat(searchUserList).hasSizeGreaterThan(0);
+        System.out.println(searchUserList.size());
+    }
 }

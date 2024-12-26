@@ -403,7 +403,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 - 인증되지 않는 요청에 관해서 처리하는 클래스이다
 - `setErrorResponse()` 동일한 결과 형태를 반환하기 위해 커스텀한 `response` 형태로 반환해준다
-- 
 
 
 - 인증 예외 발생 후 `AuthenticationEntryPoint`를 구현해서 오류 처리를 한다

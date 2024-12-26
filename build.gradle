@@ -74,6 +74,10 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+	//aws
+	implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
+	implementation 'com.amazonaws:aws-java-sdk-dynamodb'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	//test lombok 사용

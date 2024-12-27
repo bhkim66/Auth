@@ -23,9 +23,6 @@ public class ApiLogAspect {
     @Aspect
     @Component
     public class ApiLogAop {
-        @Value("${spring.service.stage}")
-        private String stage;
-
         final AmazonDynamoDBClient amazonDynamoDBClient;
         final HttpServletRequest httpServletRequest;
         final HttpServletResponse httpServletResponse;

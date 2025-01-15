@@ -4,6 +4,7 @@ import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.config.TestQueryDslConfig;
 import com.bhkim.auth.dto.condition.UserSearchCondition;
 import com.bhkim.auth.dto.response.UserResponseDTO;
+import com.bhkim.auth.entity.jpa.Address;
 import com.bhkim.auth.entity.jpa.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -15,7 +16,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static com.bhkim.auth.common.TypeEnum.F;
@@ -30,6 +33,9 @@ class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Autowired
     EntityManager em;
@@ -61,7 +67,6 @@ class UserRepositoryTest {
                 .build();
         //when
         User saveUser = userRepository.save(user);
-        em.flush();
 
         //then
         assertThat(saveUser).isNotNull();
@@ -71,6 +76,79 @@ class UserRepositoryTest {
         assertThat(user.getAge()).isEqualTo(saveUser.getAge());
         assertThat(user.getSex()).isEqualTo(saveUser.getSex());
     }
+
+    @Test
+    @DisplayName("멤버 인덱스 확인")
+    void 멤버_인덱스_확인() {
+        //given
+        List<User> userList = new ArrayList<>();
+
+        for (int i = 0; i < 10000; i++) {
+            User user = User.builder()
+                    .id("bhkim" + i)
+                    .name("김병호" + i / 500)
+                    .password("test1234")
+                    .age(30)
+                    .sex(M)
+                    .phoneNumber(null)
+                    .build();
+
+            userList.add(user);
+        }
+        //when
+        userRepository.saveAll(userList);
+
+        //then
+
+        em.createQuery("select u from User u where u.id = :id and u.name like :name")
+                .setParameter("id", "bhkim9900")
+                .setParameter("name", "김병호")
+                .getResultList();
+    }
+
+    @Test
+    @DisplayName("유저 address 가져오기")
+    void 멤버_주소_가져오기() {
+        //given
+        User user = User.builder()
+                .id("bhkim62")
+                .name("김병호")
+                .password("test1234")
+                .age(30)
+                .sex(M)
+                .phoneNumber(null)
+                .build();
+
+        em.persist(user);
+
+
+        for (int i = 0; i < 10; i++) {
+            Address address = Address.builder()
+                    .zipcode(12345 + i)
+                    .address1("서울시입니다" + i)
+                    .user(user)
+                    .build();
+            em.persist(address);
+            Address address1 = em.find(Address.class, address.getSeq());
+            System.out.println("address1 = " + address1.getSeq());
+            System.out.println("address1 = " + address1.getUser());
+        }
+        em.flush();
+        em.clear();
+        //when
+//        User getUser = userRepository.findBySeq(1L).orElseThrow();
+//        System.out.println("getUser = " + getUser.getAddresses());
+
+        User findUser = userRepository.getUserAddressList(user.getSeq()).orElseThrow();
+        System.out.println("-------------------------------------------------------------");
+        //then
+        System.out.println("findUser = " + findUser);
+
+//        List<Address> all = addressRepository.findAll();
+//        all.forEach(System.out::println);
+
+    }
+
 
     @Test
     @DisplayName("멤버 출력 테스트")
@@ -94,14 +172,16 @@ class UserRepositoryTest {
         assertThat(actualUser).extracting("id").isEqualTo(user.getId());
         assertThat(actualUser).extracting("name").isEqualTo(user.getName());
         assertThat(actualUser).extracting("age").isEqualTo(user.getAge());
+
+
     }
 
     @Test
     void 조건으로_멤버_검색() throws Exception {
         //given
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             TypeEnum sex;
-            if(i % 2 == 0) {
+            if (i % 2 == 0) {
                 sex = F;
             } else {
                 sex = M;

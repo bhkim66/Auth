@@ -26,9 +26,9 @@ public class QAddress extends EntityPathBase<Address> {
 
     public final StringPath address2 = createString("address2");
 
-    public final NumberPath<Long> addressSeq = createNumber("addressSeq", Long.class);
-
     public final StringPath name = createString("name");
+
+    public final NumberPath<Long> seq = createNumber("seq", Long.class);
 
     public final QUser user;
 

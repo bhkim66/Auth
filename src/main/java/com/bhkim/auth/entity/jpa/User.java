@@ -5,15 +5,19 @@ import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.BatchSize;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 @Getter
 @Entity
 @Table(name = "USERS")
@@ -21,7 +25,7 @@ import java.util.List;
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_SEQ")
     private Long seq;
 
@@ -51,6 +55,10 @@ public class User extends BaseEntity {
 
     @Column(name = "ROLE")
     private RoleEnum role;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses = new ArrayList<>();
 
     @Builder
     public User(RoleEnum role, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id) {

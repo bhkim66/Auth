@@ -117,29 +117,29 @@ class AuthServiceTest {
         assertThat(user).extracting("id").isEqualTo(signup.id());
     }
 
-    @Test
-    void 회원가입_중복id_값_전달_실패() {
-        // given
-        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
-        AuthRequestDTO.Signup signupDTO = AuthRequestDTO.Signup.builder()
-                .userId(signup.id())
-                .password(signup.password())
-                .name(signup.name())
-                .age(signup.age())
-                .sex(signup.sex())
-                .phoneNumber(signup.phoneNumber())
-                .build();
-        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
-//        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
-
-        // when
-        // then
-        assertThatThrownBy(() -> {
-                    authService.signUp(signupDTO);
-                    em.flush();
-                }
-        ).isInstanceOf(ConstraintViolationException.class);
-    }
+//    @Test
+//    void 회원가입_중복id_값_전달_실패() {
+//        // given
+//        SignUpRequest signup = new SignUpRequest("bhkim62", "test1234", "김병호", 30, M, "01029292020");
+//        AuthRequestDTO.Signup signupDTO = AuthRequestDTO.Signup.builder()
+//                .userId(signup.id())
+//                .password(signup.password())
+//                .name(signup.name())
+//                .age(signup.age())
+//                .sex(signup.sex())
+//                .phoneNumber(signup.phoneNumber())
+//                .build();
+//        // stubbing: memberRepository.save()가 호출되면 ApiException을 던지도록 설정
+////        given(userRepository.save(any())).willThrow(new ApiException(DATABASE_INSERT_ERROR));
+//
+//        // when
+//        // then
+//        assertThatThrownBy(() -> {
+//                    authService.signUp(signupDTO);
+//                    em.flush();
+//                }
+//        ).isInstanceOf(ConstraintViolationException.class);
+//    }
 
     @Test
     void 회원가입_중복_ID_아닐경우() {

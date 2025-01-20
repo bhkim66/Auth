@@ -63,6 +63,25 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<UserResponseDTO.UserOrders> getUserOrders(Long userSeq) {
+//        queryFactory.select(user)
+//                .join(order)
+//                .from(user)
+//                .where()
+//                .offset()
+//                .limit()
+//
+//
+//
+//
+//                .fetch();
+//
+//
+//
+        return List.of();
+    }
+
     private BooleanExpression sexEq(TypeEnum sex) {
         return sex != null ? user.sex.eq(sex) : null;
     }

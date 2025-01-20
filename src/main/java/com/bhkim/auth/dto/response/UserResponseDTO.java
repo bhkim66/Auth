@@ -8,7 +8,6 @@ import lombok.Builder;
 
 public class UserResponseDTO {
 
-    @AllArgsConstructor
     public static class UserInfo {
         private String id;
         private String name;
@@ -24,5 +23,10 @@ public class UserResponseDTO {
             this.sex = user.getSex();
             this.phoneNumber = user.getPhoneNumber();
         }
+    }
+
+    public static class UserOrders {
+        private UserInfo userInfo;
+        private String orderNum;
     }
 }

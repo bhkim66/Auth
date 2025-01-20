@@ -72,8 +72,8 @@ dependencies {
 	//QueryDsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 에러 대응 코드
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 에러 대응 코드
 
 	//aws
 	implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
@@ -95,4 +95,21 @@ tasks.named('test') {
 }
 tasks.withType(JavaExec) {
 	jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
+
+///// Querydsl 빌드 옵션 (옵셔널)
+def generated = 'src/main/generated'
+
+///// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile).configureEach {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+///// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+	main.java.srcDirs += [ generated ]
+}
+
+clean {
+	delete file(generated)
 }

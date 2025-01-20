@@ -60,6 +60,11 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Address> addresses = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
+
+
     @Builder
     public User(RoleEnum role, TypeEnum status, String phoneNumber, TypeEnum sex, int age, String name, String password, String id) {
         this.role = role;

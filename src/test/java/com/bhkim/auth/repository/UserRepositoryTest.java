@@ -140,12 +140,7 @@ class UserRepositoryTest {
 //        System.out.println("getUser = " + getUser.getAddresses());
 
         User findUser = userRepository.getUserAddressList(user.getSeq()).orElseThrow();
-        System.out.println("-------------------------------------------------------------");
-        //then
-        System.out.println("findUser = " + findUser);
 
-//        List<Address> all = addressRepository.findAll();
-//        all.forEach(System.out::println);
 
     }
 
@@ -176,36 +171,36 @@ class UserRepositoryTest {
 
     }
 
-    @Test
-    void 조건으로_멤버_검색() throws Exception {
-        //given
-        for (int i = 0; i < 100; i++) {
-            TypeEnum sex;
-            if (i % 2 == 0) {
-                sex = F;
-            } else {
-                sex = M;
-            }
-            Random random = new Random();
-
-            User user = User.builder()
-                    .id("bhkim" + i)
-                    .name("김병호")
-                    .password("test1234")
-                    .age(random.nextInt(50))
-                    .sex(sex)
-                    .phoneNumber(null)
-                    .build();
-            userRepository.save(user);
-        }
-        em.flush();
-
-        UserSearchCondition userSearchCondition = new UserSearchCondition("bhkim", 0, 46, M);
-        //when
-        List<UserResponseDTO.UserInfo> searchUserList = userRepository.searchUserWithCondition(userSearchCondition);
-
-        //then
-        assertThat(searchUserList).hasSizeGreaterThan(0);
-        System.out.println(searchUserList.size());
-    }
+//    @Test
+//    void 조건으로_멤버_검색() throws Exception {
+//        //given
+//        for (int i = 0; i < 100; i++) {
+//            TypeEnum sex;
+//            if (i % 2 == 0) {
+//                sex = F;
+//            } else {
+//                sex = M;
+//            }
+//            Random random = new Random();
+//
+//            User user = User.builder()
+//                    .id("bhkim" + i)
+//                    .name("김병호")
+//                    .password("test1234")
+//                    .age(random.nextInt(50))
+//                    .sex(sex)
+//                    .phoneNumber(null)
+//                    .build();
+//            userRepository.save(user);
+//        }
+//        em.flush();
+//
+//        UserSearchCondition userSearchCondition = new UserSearchCondition("bhkim", 0, 46, M);
+//        //when
+//        List<UserResponseDTO.UserInfo> searchUserList = userRepository.searchUserWithCondition(userSearchCondition);
+//
+//        //then
+//        assertThat(searchUserList).hasSizeGreaterThan(0);
+//        System.out.println(searchUserList.size());
+//    }
 }

@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface UserRepositoryCustom {
     List<UserResponseDTO.UserInfo> searchUserWithCondition(UserSearchCondition condition);
+
+    List<UserResponseDTO.UserOrders> getUserOrders(Long userSeq);
+
 }

@@ -5,6 +5,7 @@ import com.bhkim.auth.config.TestQueryDslConfig;
 import com.bhkim.auth.dto.condition.UserSearchCondition;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.Address;
+import com.bhkim.auth.entity.jpa.Order;
 import com.bhkim.auth.entity.jpa.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -14,8 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.awt.print.PageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @EnableJpaAuditing
 @Import(TestQueryDslConfig.class)
+@EnableJpaRepositories
 class UserRepositoryTest {
 
     @Autowired
@@ -167,40 +173,77 @@ class UserRepositoryTest {
         assertThat(actualUser).extracting("id").isEqualTo(user.getId());
         assertThat(actualUser).extracting("name").isEqualTo(user.getName());
         assertThat(actualUser).extracting("age").isEqualTo(user.getAge());
+    }
 
+    @Test
+    @DisplayName("멤버 출력 테스트")
+    void 주문_가져오기_querydsl_테스트() {
+        //given
+        for(int i = 0; i < 5; i++)
+        {
+            User user = User.builder()
+                    .id("bhkim6" + i)
+                    .name("김병호")
+                    .password("test1234")
+                    .age(30)
+                    .sex(M)
+                    .phoneNumber(null)
+                    .build();
+            em.persist(user);
+            for(int j = 0; j < 10; j++) {
+                Order order = Order.builder()
+                        .orderNum("test1234" + i)
+                        .user(user)
+                        .build();
+                em.persist(order);
+            }
+        }
+        em.clear();
+
+        UserSearchCondition condition = new UserSearchCondition(0L, null, 0, 0, null);
+        //when
+
+        Pageable pageRequest = PageRequest.of(0, 3);
+        List<User> userOrders = userRepository.getUserOrders(condition);
+
+//      then
+        for (User userOrder : userOrders) {
+            System.out.println("userOrder = " + userOrder);
+
+        }
 
     }
 
 //    @Test
-//    void 조건으로_멤버_검색() throws Exception {
-//        //given
-//        for (int i = 0; i < 100; i++) {
-//            TypeEnum sex;
-//            if (i % 2 == 0) {
-//                sex = F;
-//            } else {
-//                sex = M;
-//            }
-//            Random random = new Random();
-//
-//            User user = User.builder()
-//                    .id("bhkim" + i)
-//                    .name("김병호")
-//                    .password("test1234")
-//                    .age(random.nextInt(50))
-//                    .sex(sex)
-//                    .phoneNumber(null)
-//                    .build();
-//            userRepository.save(user);
-//        }
-//        em.flush();
-//
-//        UserSearchCondition userSearchCondition = new UserSearchCondition("bhkim", 0, 46, M);
-//        //when
-//        List<UserResponseDTO.UserInfo> searchUserList = userRepository.searchUserWithCondition(userSearchCondition);
-//
-//        //then
-//        assertThat(searchUserList).hasSizeGreaterThan(0);
-//        System.out.println(searchUserList.size());
-//    }
+////    void 조건으로_멤버_검색() throws Exception {
+////        //given
+////        for (int i = 0; i < 100; i++) {
+////            TypeEnum sex;
+////            if (i % 2 == 0) {
+////                sex = F;
+////            } else {
+////                sex = M;
+////            }
+////            Random random = new Random();
+////
+////            User user = User.builder()
+////                    .id("bhkim" + i)
+////                    .name("김병호")
+////                    .password("test1234")
+////                    .age(random.nextInt(50))
+////                    .sex(sex)
+////                    .phoneNumber(null)
+////                    .build();
+////            userRepository.save(user);
+////        }
+////        em.flush();
+////
+////        UserSearchCondition userSearchCondition = new UserSearchCondition("bhkim", 0, 46, M);
+////        //when
+////        List<UserResponseDTO.UserInfo> searchUserList = userRepository.searchUserWithCondition(userSearchCondition);
+////
+////        //then
+////        assertThat(searchUserList).hasSizeGreaterThan(0);
+////        System.out.println(searchUserList.size());
+////    }
 }

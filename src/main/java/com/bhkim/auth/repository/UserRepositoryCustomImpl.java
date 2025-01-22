@@ -3,14 +3,18 @@ package com.bhkim.auth.repository;
 import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.dto.condition.UserSearchCondition;
 import com.bhkim.auth.dto.response.UserResponseDTO;
+import com.bhkim.auth.entity.jpa.User;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.bhkim.auth.entity.jpa.QAddress.address;
+import static com.bhkim.auth.entity.jpa.QOrder.order;
 import static com.bhkim.auth.entity.jpa.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -64,22 +68,11 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public List<UserResponseDTO.UserOrders> getUserOrders(Long userSeq) {
-//        queryFactory.select(user)
-//                .join(order)
-//                .from(user)
-//                .where()
-//                .offset()
-//                .limit()
-//
-//
-//
-//
-//                .fetch();
-//
-//
-//
-        return List.of();
+    public List<User> getUserOrders(UserSearchCondition condition) {
+        return queryFactory.selectFrom(user)
+                .join(user.orders, order)
+                .where(order.orderNum.eq("test12340"))
+                .fetch();
     }
 
     private BooleanExpression sexEq(TypeEnum sex) {

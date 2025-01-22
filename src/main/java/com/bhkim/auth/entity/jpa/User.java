@@ -5,13 +5,10 @@ import com.bhkim.auth.common.TypeEnum;
 import com.bhkim.auth.dto.request.UserRequestDTO;
 import com.bhkim.auth.dto.response.UserResponseDTO;
 import com.bhkim.auth.entity.jpa.base.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
@@ -56,12 +53,14 @@ public class User extends BaseEntity {
     @Column(name = "ROLE")
     private RoleEnum role;
 
+    @BatchSize(size = 100)
     @JsonManagedReference
     @OneToMany(mappedBy = "user")
     private List<Address> addresses = new ArrayList<>();
 
+    @BatchSize(size = 100)
     @JsonManagedReference
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     private List<Order> orders = new ArrayList<>();
 
 

@@ -29,6 +29,7 @@ spring:
         format_sql: true         # 쿼리 로그 포맷 (정렬)
         #                show_sql: true           # 쿼리 로그 출력
         use_sql_comments: true
+        default_batch_fetch_size: 100 # batch size 지정
   output:
     ansi:
       enabled: ALWAYS
@@ -53,22 +54,22 @@ server:
   port: 8080
   servlet:
     context-path: /api
-logging.level:
-  org.hibernate.SQL: debug            # 로그 파일로 Sql을 출력
+#logging.level:
+#  org.hibernate.SQL: debug            # 로그 파일로 Sql을 출력
 
 
 security:
   jwt:
     key: "4a9d8f41b365a9c5e33e3a2c5e16a598"
 
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql: trace
-      springframework: info
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type:
+#          descriptor:
+#            sql: trace
+#      springframework: info
 
 
 ---

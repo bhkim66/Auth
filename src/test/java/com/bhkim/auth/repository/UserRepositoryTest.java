@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -176,11 +177,9 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("멤버 출력 테스트")
-    void 주문_가져오기_querydsl_테스트() {
+    void 특정유저_주문_가져오기_oneToMany_fetchJoin() {
         //given
-        for(int i = 0; i < 5; i++)
-        {
+        for(int i = 0; i < 5; i++) {
             User user = User.builder()
                     .id("bhkim6" + i)
                     .name("김병호")
@@ -192,7 +191,7 @@ class UserRepositoryTest {
             em.persist(user);
             for(int j = 0; j < 10; j++) {
                 Order order = Order.builder()
-                        .orderNum("test1234" + i)
+                        .orderNum("orderNumtest" + i)
                         .user(user)
                         .build();
                 em.persist(order);
@@ -200,18 +199,21 @@ class UserRepositoryTest {
         }
         em.clear();
 
+        String searchId = "bhkim62";
         UserSearchCondition condition = new UserSearchCondition(0L, null, 0, 0, null);
+
         //when
-
         Pageable pageRequest = PageRequest.of(0, 3);
-        List<User> userOrders = userRepository.getUserOrders(condition);
+        Page<User> userOrders = userRepository.getUserOrders(condition, pageRequest);
 
-//      then
-        for (User userOrder : userOrders) {
-            System.out.println("userOrder = " + userOrder);
-
-        }
-
+        System.out.println("userOrders1 = " + userOrders.getTotalPages());
+        System.out.println("userOrders2 = " + userOrders.getTotalElements());
+        System.out.println("userOrders3 = " + userOrders.getSize());
+        System.out.println("userOrders4 = " + userOrders.getContent());
+        //then
+//        for (User userOrder : userOrders.getContent()) {
+//            System.out.println("userOrder = " + userOrder);
+//        }
     }
 
 //    @Test

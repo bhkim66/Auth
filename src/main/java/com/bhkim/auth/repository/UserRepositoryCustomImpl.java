@@ -7,9 +7,13 @@ import com.bhkim.auth.entity.jpa.User;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -68,11 +72,18 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public List<User> getUserOrders(UserSearchCondition condition) {
-        return queryFactory.selectFrom(user)
-                .join(user.orders, order)
-                .where(order.orderNum.eq("test12340"))
+    public Page<User> getUserOrders(UserSearchCondition condition, Pageable page) {
+        List<User> users = queryFactory.selectFrom(user)
+//                .join(user.orders, order)
+//                .where(user.id.eq(condition.getId()))
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory.select(user.count())
+                .from(user);
+
+        return PageableExecutionUtils.getPage(users, page, countQuery::fetchOne);
     }
 
     private BooleanExpression sexEq(TypeEnum sex) {

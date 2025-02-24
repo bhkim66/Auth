@@ -11,14 +11,12 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.Set;
 
-import static com.bhkim.auth.entity.jpa.QAddress.address;
-import static com.bhkim.auth.entity.jpa.QOrder.order;
 import static com.bhkim.auth.entity.jpa.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -69,7 +67,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                         sexEq(condition.getSex())
                 )
                 .fetch();
+
     }
+
 
     @Override
     public Page<User> getUserOrders(UserSearchCondition condition, Pageable page) {

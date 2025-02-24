@@ -10,6 +10,7 @@ import com.bhkim.auth.entity.jpa.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ class UserRepositoryTest {
     @Autowired
     EntityManager em;
 
-//    @BeforeEach
+    //    @BeforeEach
 //    void beforeEach() {
 //        //멤버 한명 추가
 //        User user = User.builder()
